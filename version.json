@@ -2,7 +2,7 @@
   "product": "Field TAK Hub",
   "hubVersion": "2.0.1-rc2",
   "androidVersionCode": 20102,
-  "builderVersion": "2.1.0-rc3",
+  "builderVersion": "2.1.0-rc4",
   "releaseChannel": "rc",
   "ftakSchema": 2,
   "projectSchema": 2,

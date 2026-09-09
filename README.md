@@ -5,7 +5,7 @@
 This repository contains:
 
 - **Field TAK Hub 2.0.1 RC2 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
-- **Field TAK Hub Builder 2.1.0 RC3 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
+- **Field TAK Hub Builder 2.1.0 RC4 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
 
 > Status: **Release Candidate 2 (Android) / Release Candidate 3 (Builder)**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
 
@@ -31,7 +31,9 @@ This repository contains:
 
 ### Windows Builder
 
-Builder 2.1.0 RC3 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC3_FROM_SCRATCH_EN.md`.
+Builder 2.1.0 RC4 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC4_FROM_SCRATCH_EN.md`.
+
+RC4 restores the clearer pre-dark-theme Builder layout while retaining the 1.9 application icon. It also adds **Import legacy 1.x ZIP**: a signed 1.x deployment can be verified (RSA + SHA-256), migrated into a fresh 2.x project and rebuilt as an Ed25519-signed `.ftak` v2. A single ATAK APK placed in `source/atak/` is now emitted as `payload/atak/atak.apk` instead of being nested inside the Mission Package.
 
 
 - portable `.fthproj` projects with relative source/output paths
@@ -121,7 +123,7 @@ The gate verifies version consistency, PL/EN resource parity, JSON/XML/XAML synt
 - web: `8443`
 - ATAK target: `5.6` through `5.8`
 
-These are **example/default values only**. In Builder 2.1.0 RC3 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
+These are **example/default values only**. In Builder 2.1.0 RC4 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
 
 ## Typical field workflow
 

@@ -1,7 +1,19 @@
-FIELD TAK HUB 2.0.1-RC1 / BUILDER 2.1.0-RC1 — CI HOTFIX 3
+FIELD TAK HUB 2.0.1 RC2 / BUILDER 2.1.0 RC4 — GITHUB WEB
+==========================================================
 
-Ta paczka zawiera tylko pliki do podmiany po błędzie Windows Buildera wykrytym przez GitHub Actions.
+1. Wgraj przez przeglądarkę całą zawartość tego katalogu do repozytorium.
+2. Folder .github jest ukryty, dlatego workflowy są dodatkowo w WORKFLOWS_FOR_GITHUB_WEB.
+3. Na GitHub utwórz pliki:
+   .github/workflows/source-gate.yml
+   .github/workflows/android.yml
+   .github/workflows/windows-builder.yml
+   .github/workflows/release.yml
+   i wklej do nich zawartość odpowiednich plików z WORKFLOWS_FOR_GITHUB_WEB.
+4. Uruchom Source Gate, Android i Windows Builder.
 
-Najważniejsza zmiana: wszystkie usługi Buildera używające Path/File/Directory/Stream jawnie importują System.IO. Source Gate sprawdza teraz cały projekt i zablokuje podobny błąd przed dotnet test.
-
-W GitHubie podmień pliki zachowując dokładnie ich ścieżki, wykonaj commit do main, następnie Actions -> Source Gate -> Run workflow oraz Windows Builder -> Run workflow. Androida nie trzeba zmieniać w Hotfix 3.
+RC4:
+- powrót do czytelnego pierwotnego layoutu Buildera,
+- zachowana ikona 1.9,
+- Importuj ZIP 1.x,
+- weryfikacja RSA + SHA-256 starej paczki,
+- bezpośredni ATAK APK: source/atak/*.apk -> payload/atak/atak.apk.

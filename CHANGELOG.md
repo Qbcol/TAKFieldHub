@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.0.1 RC2 / Builder 2.1.0 RC4 — 2026-09-09
+
+### Builder
+- restored the clearer pre-dark-theme Builder layout while keeping the 1.9 application icon;
+- added **Import legacy 1.x ZIP** with legacy RSA signature and SHA-256 verification;
+- imported legacy deployments become normal 2.x workspaces and are rebuilt with the current Ed25519 Publisher key;
+- added direct ATAK APK packaging: one APK in `source/atak/` becomes `payload/atak/atak.apk`;
+- ATAK APK files are excluded from the generated ATAK Mission Package;
+- retained automatic project folders, drag-and-drop, server profile GUI, Build Preview and LAN QR distribution;
+- corrected the Builder update repository default to `Qbcol/TAKFieldHub` (the previous default could return GitHub 404).
+
+### Android
+- no provisioning/security contract change from 2.0.1 RC2; `.ftak` schema v2 remains unchanged.
+
+
 ## 2.0.1 RC2 / Builder 2.1.0 RC3 — 2026-09-09
 
 - restored the TAK Field Hub 1.9 launcher/application icon,

@@ -1,0 +1,9 @@
+FIELD TAK HUB 2.0.1 RC2 / BUILDER 2.1.0 RC4 — GITHUB WEB
+==========================================================
+
+Upload this directory to GitHub using the browser. Because .github is hidden on some systems,
+workflow files are duplicated under WORKFLOWS_FOR_GITHUB_WEB. Create the matching
+.github/workflows/*.yml files in GitHub and run Source Gate, Android and Windows Builder.
+
+RC4 restores the readable pre-dark-theme Builder layout, keeps the 1.9 app icon,
+adds legacy 1.x ZIP import with RSA/SHA-256 verification, and supports a direct ATAK APK.

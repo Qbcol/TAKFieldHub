@@ -1,4 +1,4 @@
-# Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC3 — Project Status
+# Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC4 — Project Status
 
 ## Implemented in RC1
 
@@ -62,8 +62,10 @@ Real GitHub Actions exposed additional Windows Builder compile errors after Hotf
 Builder now creates and repairs the complete project folder tree automatically, provides a New Project wizard, per-folder open/count controls and drag-and-drop. Existing project files are preserved.
 
 
-## 1.9 visual identity refresh
+## Builder RC4 readability + legacy migration
 
-Field TAK Hub 2.0.1 RC2 and Builder 2.1.0 RC3 restore the recognizable 1.9 visual identity: the original launcher/Builder icon, dark slate background, cyan accent, green success and red problem/stop states. Primary actions are now more prominent while accessibility semantics and textual status labels remain intact. Package format, cryptographic verification and provisioning QR contracts are unchanged.
+Field TAK Hub Android 2.0.1 RC2 keeps the 1.9-inspired launcher/visual identity. Builder 2.1.0 RC4 deliberately restores the clearer pre-dark-theme WPF layout after RC3 field feedback, while retaining the 1.9 Builder application icon.
 
-The earlier RC1 code path reached green GitHub Actions for Android, Windows Builder and Source Gate. Because this visual refresh changes Android Compose resources and WPF/XAML, the three workflows must be rerun for this exact RC2/RC3 commit before it is promoted further.
+RC4 also adds a controlled **Import legacy 1.x ZIP** path. Legacy `manifest.json`, RSA signature and per-file SHA-256 values are verified before files are copied into a new 2.x workspace. Rebuilding signs the resulting `.ftak` v2 with the current Ed25519 Publisher key. A single ATAK APK in `source/atak/` is now packaged as `payload/atak/atak.apk`; other ATAK import data still becomes a Mission Package.
+
+The earlier RC1 code path reached green GitHub Actions for Android, Windows Builder and Source Gate. This exact RC4 commit must still pass the three workflows before release promotion.
