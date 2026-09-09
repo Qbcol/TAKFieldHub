@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fieldtak.local/schema/fieldtak-v2.schema.json",
+  "title": "Field TAK Package Manifest v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "package",
+    "target",
+    "server",
+    "security",
+    "distribution",
+    "components"
+  ],
+  "properties": {
+    "schema": {
+      "const": "fieldtak.package"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "package": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "version",
+        "createdUtc",
+        "publisher"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "platform",
+        "minVersion",
+        "maxVersion"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string"
+        },
+        "minVersion": {
+          "type": "string"
+        },
+        "maxVersion": {
+          "type": "string"
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "required": [
+        "type",
+        "name",
+        "host"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "cotPort": {
+          "type": "integer"
+        },
+        "apiPort": {
+          "type": "integer"
+        },
+        "webPort": {
+          "type": "integer"
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "missionPackage": {
+          "type": "boolean"
+        },
+        "plugins": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "required": [
+        "hash",
+        "signature"
+      ],
+      "properties": {
+        "hash": {
+          "const": "SHA-256"
+        },
+        "signature": {
+          "const": "Ed25519"
+        },
+        "publisherFingerprintSha256": {
+          "type": "string"
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "required": [
+        "expiresUtc"
+      ],
+      "properties": {
+        "expiresUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "maxDownloads": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "size": {
+      "type": "object",
+      "required": [
+        "payloadBytes",
+        "uncompressedBytes",
+        "recommendedFreeBytes"
+      ],
+      "properties": {
+        "payloadBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncompressedBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recommendedFreeBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

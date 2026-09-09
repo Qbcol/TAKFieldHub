@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+  <sys:String x:Key="WindowTitle">Field TAK Hub Builder 2.1.0 RC1</sys:String>
+  <sys:String x:Key="HeaderTitle">FIELD TAK HUB BUILDER</sys:String>
+  <sys:String x:Key="HeaderVersion">Builder 2.1.0 RC1 • Hub 2.0.1 RC1</sys:String>
+  <sys:String x:Key="Project">Projekt</sys:String><sys:String x:Key="Name">Nazwa</sys:String><sys:String x:Key="PackageId">ID pakietu</sys:String><sys:String x:Key="Version">Wersja</sys:String><sys:String x:Key="Publisher">Wydawca</sys:String>
+  <sys:String x:Key="Source">Źródło</sys:String><sys:String x:Key="Output">Katalog wyjściowy</sys:String><sys:String x:Key="Browse">_Wybierz</sys:String>
+  <sys:String x:Key="AtakTarget">Docelowa wersja ATAK</sys:String><sys:String x:Key="Min">Min</sys:String><sys:String x:Key="Max">Max</sys:String>
+  <sys:String x:Key="ServerConfig">Konfiguracja serwera TAK</sys:String><sys:String x:Key="ServerHelp">Wpisz dane ręcznie. Builder zapisze je w projekcie, utworzy server.txt i użyje ich do wygenerowania server.pref dla ATAK.</sys:String>
+  <sys:String x:Key="Type">Typ</sys:String><sys:String x:Key="ServerName">Nazwa serwera</sys:String><sys:String x:Key="Host">Host / domena</sys:String><sys:String x:Key="Ports">Porty</sys:String><sys:String x:Key="Cot">CoT</sys:String><sys:String x:Key="Api">API / Enrollment</sys:String><sys:String x:Key="Web">Web</sys:String>
+  <sys:String x:Key="LoadServerTxt">Wczytaj server.txt</sys:String><sys:String x:Key="SaveServerTxt">Zapisz server.txt</sys:String><sys:String x:Key="TestServer">_Testuj serwer</sys:String><sys:String x:Key="ServerDefaultsNote">Dane GGZS są wyłącznie przykładowym profilem domyślnym. Możesz je zmienić przed każdym buildem.</sys:String>
+  <sys:String x:Key="QrValidity">Ważność QR (godziny)</sys:String><sys:String x:Key="MaxDownloads">Maks. pobrań</sys:String>
+  <sys:String x:Key="LoadProject">_Wczytaj projekt</sys:String><sys:String x:Key="SaveProject">_Zapisz projekt</sys:String><sys:String x:Key="Analyze">_Analizuj</sys:String><sys:String x:Key="BuildPackage">_Buduj pakiet</sys:String>
+  <sys:String x:Key="ContentAnalysis">Analiza zawartości</sys:String><sys:String x:Key="Category">Kategoria</sys:String><sys:String x:Key="Path">Ścieżka</sys:String><sys:String x:Key="Bytes">Bajty</sys:String>
+  <sys:String x:Key="StartLan">_Uruchom dystrybucję LAN</sys:String><sys:String x:Key="Stop">_Zatrzymaj</sys:String><sys:String x:Key="StatusDetails">Status / szczegóły pakietu</sys:String>
+  <sys:String x:Key="Language">Język</sys:String><sys:String x:Key="English">English</sys:String><sys:String x:Key="Polish">Polski</sys:String>
+  <sys:String x:Key="Security">Bezpieczeństwo wydawcy</sys:String><sys:String x:Key="Fingerprint">Fingerprint</sys:String><sys:String x:Key="ExportKey">Eksportuj backup klucza</sys:String><sys:String x:Key="ImportKey">Importuj backup klucza</sys:String>
+  <sys:String x:Key="CheckUpdates">Sprawdź aktualizacje</sys:String><sys:String x:Key="AccessibilityHint">Obsługa klawiatury, Narratora, skalowania DPI i trybu wysokiego kontrastu.</sys:String>
+  <sys:String x:Key="BuildPreviewTitle">Podgląd budowania</sys:String><sys:String x:Key="BuildPreviewConfirm">Zbudować ten pakiet?</sys:String>
+  <sys:String x:Key="PasswordTitle">Hasło backupu klucza wydawcy</sys:String><sys:String x:Key="PasswordPrompt">Podaj hasło (minimum 10 znaków).</sys:String><sys:String x:Key="Ok">OK</sys:String><sys:String x:Key="Cancel">Anuluj</sys:String>
+  <sys:String x:Key="BuildPreviewBody">{0}  v{1}\n\nATAK: {2} – {3}\nSerwer: {4}\nPorty: {5} / {6} / {7}\nPluginy: {8}\nMapy: {9}\nPliki: {10}\nRozmiar źródła: {11}\nWażność QR: {12} h\nMaks. pobrań: {13}\nWydawca: {14}</sys:String>
+  <sys:String x:Key="LogAnalyzed">Przeanalizowano {0} plików. Źródło ATAK: {1}; APK: {2}; razem {3}.</sys:String>
+  <sys:String x:Key="LogBuilt">Zbudowano i podpisano:\r\n{0}\r\n\r\nserver.txt:\r\n{1}\r\n\r\nATAK server.pref jest generowany w Mission Package, chyba że source/atak zawiera własny .pref.</sys:String>
+  <sys:String x:Key="LogTestingServer">Testowanie {0}…</sys:String>
+  <sys:String x:Key="LogServerTest">TEST SERWERA</sys:String>
+  <sys:String x:Key="BuildFirst">Najpierw zbuduj pakiet.</sys:String>
+  <sys:String x:Key="LogLanStarted">Uruchomiono dystrybucję LAN. Wznowienia HTTP Range/206 są aktywne. Zwykły HTTP jest przeznaczony tylko dla prywatnego LAN; Hub odrzuca publiczne adresy cleartext.\r\nDescriptor: {0}\r\nDeep-link QR: {1}</sys:String>
+  <sys:String x:Key="LogDistributionStopped">Dystrybucja zatrzymana.</sys:String>
+  <sys:String x:Key="LogSavedProject">Zapisano {0}</sys:String>
+  <sys:String x:Key="LogLoadedProject">Wczytano {0}</sys:String>
+  <sys:String x:Key="LogLoadedServer">Wczytano konfigurację serwera: {0}</sys:String>
+  <sys:String x:Key="LogSavedServer">Zapisano konfigurację serwera: {0}</sys:String>
+  <sys:String x:Key="LogKeyExported">Wyeksportowano zaszyfrowany backup klucza wydawcy: {0}</sys:String>
+  <sys:String x:Key="LogKeyRestored">Przywrócono klucz wydawcy. Fingerprint: {0}</sys:String>
+  <sys:String x:Key="KeyRestoredMessage">Przywrócono klucz wydawcy. Przed budowaniem pakietów produkcyjnych sprawdź fingerprint.</sys:String>
+  <sys:String x:Key="NoBuilderUpdate">Brak nowszej wersji Buildera w skonfigurowanym kanale.</sys:String>
+  <sys:String x:Key="BuilderUpdateAvailable">Dostępna aktualizacja Buildera: {0} → {1}</sys:String>
+  <sys:String x:Key="BuilderUpdatePrompt">Dostępny jest Builder {0}. Pobrać teraz zweryfikowany ZIP?</sys:String>
+  <sys:String x:Key="UpdateTitle">Aktualizacja Field TAK Hub</sys:String>
+  <sys:String x:Key="UpdateDownloaded">Pobrano aktualizację i zweryfikowano SHA-256: {0}</sys:String>
+  <sys:String x:Key="UpdateSkipped">Pominięto sprawdzanie aktualizacji: {0}</sys:String>
+  <sys:String x:Key="ErrorPrefix">BŁĄD</sys:String>
+  <sys:String x:Key="Footer">Field TAK Hub 2.0.1 RC1 — Builder 2.1.0 RC1</sys:String>
+</ResourceDictionary>

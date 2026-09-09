@@ -1,0 +1,7 @@
+<resources>
+  <style name="Theme.FieldTakHub" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:fontFamily">sans</item>
+    <item name="android:windowLightStatusBar">true</item>
+    <item name="android:statusBarColor">#F5F5F5</item>
+  </style>
+</resources>

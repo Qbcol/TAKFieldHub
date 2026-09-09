@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+  <sys:String x:Key="WindowTitle">Field TAK Hub Builder 2.1.0 RC1</sys:String>
+  <sys:String x:Key="HeaderTitle">FIELD TAK HUB BUILDER</sys:String>
+  <sys:String x:Key="HeaderVersion">Builder 2.1.0 RC1 • Hub 2.0.1 RC1</sys:String>
+  <sys:String x:Key="Project">Project</sys:String><sys:String x:Key="Name">Name</sys:String><sys:String x:Key="PackageId">Package ID</sys:String><sys:String x:Key="Version">Version</sys:String><sys:String x:Key="Publisher">Publisher</sys:String>
+  <sys:String x:Key="Source">Source</sys:String><sys:String x:Key="Output">Output</sys:String><sys:String x:Key="Browse">_Browse</sys:String>
+  <sys:String x:Key="AtakTarget">ATAK target</sys:String><sys:String x:Key="Min">Min</sys:String><sys:String x:Key="Max">Max</sys:String>
+  <sys:String x:Key="ServerConfig">TAK server configuration</sys:String><sys:String x:Key="ServerHelp">Enter the values manually. Builder saves them in the project, creates server.txt and uses them to generate server.pref for ATAK.</sys:String>
+  <sys:String x:Key="Type">Type</sys:String><sys:String x:Key="ServerName">Server name</sys:String><sys:String x:Key="Host">Host / domain</sys:String><sys:String x:Key="Ports">Ports</sys:String><sys:String x:Key="Cot">CoT</sys:String><sys:String x:Key="Api">API / Enrollment</sys:String><sys:String x:Key="Web">Web</sys:String>
+  <sys:String x:Key="LoadServerTxt">Load server.txt</sys:String><sys:String x:Key="SaveServerTxt">Save server.txt</sys:String><sys:String x:Key="TestServer">_Test server</sys:String><sys:String x:Key="ServerDefaultsNote">GGZS values are only the default example profile. You may overwrite them before every build.</sys:String>
+  <sys:String x:Key="QrValidity">QR validity (hours)</sys:String><sys:String x:Key="MaxDownloads">Max downloads</sys:String>
+  <sys:String x:Key="LoadProject">_Load project</sys:String><sys:String x:Key="SaveProject">_Save project</sys:String><sys:String x:Key="Analyze">_Analyze</sys:String><sys:String x:Key="BuildPackage">_Build package</sys:String>
+  <sys:String x:Key="ContentAnalysis">Content analysis</sys:String><sys:String x:Key="Category">Category</sys:String><sys:String x:Key="Path">Path</sys:String><sys:String x:Key="Bytes">Bytes</sys:String>
+  <sys:String x:Key="StartLan">_Start LAN distribution</sys:String><sys:String x:Key="Stop">_Stop</sys:String><sys:String x:Key="StatusDetails">Status / package details</sys:String>
+  <sys:String x:Key="Language">Language</sys:String><sys:String x:Key="English">English</sys:String><sys:String x:Key="Polish">Polski</sys:String>
+  <sys:String x:Key="Security">Publisher security</sys:String><sys:String x:Key="Fingerprint">Fingerprint</sys:String><sys:String x:Key="ExportKey">Export key backup</sys:String><sys:String x:Key="ImportKey">Import key backup</sys:String>
+  <sys:String x:Key="CheckUpdates">Check for updates</sys:String><sys:String x:Key="AccessibilityHint">Keyboard, Narrator, DPI scaling and high-contrast friendly UI.</sys:String>
+  <sys:String x:Key="BuildPreviewTitle">Build preview</sys:String><sys:String x:Key="BuildPreviewConfirm">Build this package?</sys:String>
+  <sys:String x:Key="PasswordTitle">Publisher key backup password</sys:String><sys:String x:Key="PasswordPrompt">Enter a password (minimum 10 characters).</sys:String><sys:String x:Key="Ok">OK</sys:String><sys:String x:Key="Cancel">Cancel</sys:String>
+  <sys:String x:Key="BuildPreviewBody">{0}  v{1}\n\nATAK: {2} – {3}\nServer: {4}\nPorts: {5} / {6} / {7}\nPlugins: {8}\nMaps: {9}\nFiles: {10}\nSource size: {11}\nQR validity: {12} h\nMax downloads: {13}\nPublisher: {14}</sys:String>
+  <sys:String x:Key="LogAnalyzed">Analyzed {0} files. ATAK source: {1}; APKs: {2}; total {3}.</sys:String>
+  <sys:String x:Key="LogBuilt">Built and signed:\r\n{0}\r\n\r\nserver.txt:\r\n{1}\r\n\r\nATAK server.pref is generated inside the Mission Package unless source/atak contains a custom .pref.</sys:String>
+  <sys:String x:Key="LogTestingServer">Testing {0}…</sys:String>
+  <sys:String x:Key="LogServerTest">SERVER TEST</sys:String>
+  <sys:String x:Key="BuildFirst">Build a package first.</sys:String>
+  <sys:String x:Key="LogLanStarted">LAN distribution started. HTTP Range/206 resume is enabled. Plain HTTP is intended only for private LAN; Hub rejects public cleartext URLs.\r\nDescriptor: {0}\r\nQR deep-link: {1}</sys:String>
+  <sys:String x:Key="LogDistributionStopped">Distribution stopped.</sys:String>
+  <sys:String x:Key="LogSavedProject">Saved {0}</sys:String>
+  <sys:String x:Key="LogLoadedProject">Loaded {0}</sys:String>
+  <sys:String x:Key="LogLoadedServer">Loaded server configuration: {0}</sys:String>
+  <sys:String x:Key="LogSavedServer">Saved server configuration: {0}</sys:String>
+  <sys:String x:Key="LogKeyExported">Encrypted publisher key backup exported: {0}</sys:String>
+  <sys:String x:Key="LogKeyRestored">Publisher key restored. Fingerprint: {0}</sys:String>
+  <sys:String x:Key="KeyRestoredMessage">Publisher key restored. Verify the fingerprint before building production packages.</sys:String>
+  <sys:String x:Key="NoBuilderUpdate">No newer Builder release on the configured channel.</sys:String>
+  <sys:String x:Key="BuilderUpdateAvailable">Builder update available: {0} → {1}</sys:String>
+  <sys:String x:Key="BuilderUpdatePrompt">Builder {0} is available. Download the verified ZIP now?</sys:String>
+  <sys:String x:Key="UpdateTitle">Field TAK Hub Update</sys:String>
+  <sys:String x:Key="UpdateDownloaded">Update downloaded and SHA-256 verified: {0}</sys:String>
+  <sys:String x:Key="UpdateSkipped">Update check skipped: {0}</sys:String>
+  <sys:String x:Key="ErrorPrefix">ERROR</sys:String>
+  <sys:String x:Key="Footer">Field TAK Hub 2.0.1 RC1 — Builder 2.1.0 RC1</sys:String>
+</ResourceDictionary>
