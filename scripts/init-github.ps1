@@ -5,7 +5,7 @@ Push-Location $root
 try {
   if(-not (Test-Path '.git')) { git init }
   git add .
-  if(-not (git diff --cached --quiet)) { git commit -m "Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC3" }
+  if(-not (git diff --cached --quiet)) { git commit -m "Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC4" }
   git branch -M main
   git remote remove origin 2>$null
   git remote add origin $RemoteUrl

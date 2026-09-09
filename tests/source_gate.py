@@ -87,6 +87,19 @@ for token in ('SourceFolders', 'EnsureDefaultProject', 'EnsureSourceTree', 'Crea
 main_xaml=read('apps/builder/FieldTakHub.Builder/MainWindow.xaml')
 for token in ('NewProject_Click', 'ProjectFolder_Drop', 'RepairFolders_Click'):
     if token not in main_xaml: fail(f'Builder project-folder UI missing {token}')
+for token in ('ImportLegacy_Click', 'ImportLegacy'):
+    if token not in main_xaml: fail(f'Builder legacy-import UI missing {token}')
+legacy=ROOT/'apps/builder/FieldTakHub.Builder/Services/LegacyPackageImporter.cs'
+if not legacy.exists(): fail('Builder legacy 1.x importer missing')
+else:
+    legacy_text=legacy.read_text(encoding='utf-8')
+    for token in ('RSASignaturePadding.Pkcs1','SHA256.HashData','manifest.sig','manifest.pub.pem','LEGACY-IMPORT-REPORT.txt'):
+        if token not in legacy_text: fail(f'Builder legacy importer contract missing {token}')
+for token in ('payload, "atak", "atak.apk"','FTH-BLD-006'):
+    if token not in builder: fail(f'Builder direct ATAK APK contract missing {token}')
+mission=read('apps/builder/FieldTakHub.Builder/Services/MissionPackageBuilder.cs')
+if '!Path.GetExtension(f).Equals(".apk", StringComparison.OrdinalIgnoreCase)' not in mission:
+    fail('Mission Package builder does not exclude ATAK APK files')
 builder_tests=read('apps/builder/FieldTakHub.Builder.Tests/BuilderCoreTests.cs')
 for required_using in ('using System;','using System.IO;','using System.Linq;'):
     if required_using not in builder_tests:

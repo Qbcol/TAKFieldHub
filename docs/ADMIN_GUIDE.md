@@ -2,7 +2,7 @@
 
 ## Create a project
 
-1. Start **Field TAK Hub Builder 2.1.0 RC3**.
+1. Start **Field TAK Hub Builder 2.1.0 RC4**.
 2. Set the package name, package ID and package version.
 3. Choose the source folder and output folder.
 4. Set the ATAK minimum/maximum version.
@@ -46,7 +46,7 @@ Editing a sidecar `server.txt` does **not** modify an already-built `.ftak`; loa
 
 ```text
 source/
-├── atak/        # content that becomes ATAK Mission Package content
+├── atak/        # optional ATAK APK + content that becomes ATAK Mission Package content
 ├── plugins/     # APK plugins
 ├── maps/        # map databases/packages
 ├── overlays/    # KML/KMZ etc.
@@ -54,7 +54,7 @@ source/
 └── data/
 ```
 
-If `source/atak/` contains any custom `.pref`, Builder keeps it. If no `.pref` exists, Builder creates a minimal `server.pref` from the GUI server profile.
+If `source/atak/` contains one APK, RC4 emits it as `payload/atak/atak.apk`. APK files are excluded from the Mission Package. If `source/atak/` contains any custom `.pref`, Builder keeps it; otherwise Builder creates a minimal `server.pref` from the GUI server profile.
 
 ## Publisher key
 
