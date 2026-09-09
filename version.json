@@ -1,11 +1,11 @@
 {
   "product": "Field TAK Hub",
-  "hubVersion": "2.0.1-rc2",
-  "androidVersionCode": 20102,
-  "builderVersion": "2.1.0-rc4",
+  "hubVersion": "2.0.1-rc3",
+  "androidVersionCode": 20103,
+  "builderVersion": "2.1.0-rc5",
   "releaseChannel": "rc",
   "ftakSchema": 2,
   "projectSchema": 2,
   "storageSchema": 1,
-  "defaultUpdateRepository": "Qbcol/field-tak-hub"
+  "defaultUpdateRepository": "Qbcol/TAKFieldHub"
 }

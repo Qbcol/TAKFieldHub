@@ -1,4 +1,4 @@
-# Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC4 — Project Status
+# Field TAK Hub 2.0.1 RC3 / Builder 2.1.0 RC5 — Project Status
 
 ## Implemented in RC1
 
@@ -69,3 +69,13 @@ Field TAK Hub Android 2.0.1 RC2 keeps the 1.9-inspired launcher/visual identity.
 RC4 also adds a controlled **Import legacy 1.x ZIP** path. Legacy `manifest.json`, RSA signature and per-file SHA-256 values are verified before files are copied into a new 2.x workspace. Rebuilding signs the resulting `.ftak` v2 with the current Ed25519 Publisher key. A single ATAK APK in `source/atak/` is now packaged as `payload/atak/atak.apk`; other ATAK import data still becomes a Mission Package.
 
 The earlier RC1 code path reached green GitHub Actions for Android, Windows Builder and Source Gate. This exact RC4 commit must still pass the three workflows before release promotion.
+
+
+## RC3 / RC5 same-day field-test improvements
+
+- Android RC3 keeps the RC2 layout.
+- `DOKOŃCZ KONFIGURACJĘ` now opens the per-app unknown-sources setting when required and resumes after permission is granted.
+- QR scanner routes Field TAK provisioning, direct cloud `.ftak`, ATAK/OpenTAK enrollment and ATAK data-package import.
+- Builder RC5 adds direct HTTPS cloud distribution with URL probe, local SHA-256 binding, expiry, QR PNG/TXT output and no TLS bypass.
+- `.ftak` schema stays at v2.
+- This exact RC3/RC5 source still requires a fresh Android + Windows Builder GitHub Actions run before release promotion.

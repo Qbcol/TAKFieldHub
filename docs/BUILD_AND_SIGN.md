@@ -63,8 +63,8 @@ python tests/source_gate.py
 RC1 uses:
 
 ```bash
-git tag -a v2.0.1-rc2-builder-2.1.0-rc4 -m "Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC4"
-git push origin v2.0.1-rc2-builder-2.1.0-rc4
+git tag -a v2.0.1-rc3-builder-2.1.0-rc5 -m "Field TAK Hub 2.0.1 RC3 / Builder 2.1.0 RC5"
+git push origin v2.0.1-rc3-builder-2.1.0-rc5
 ```
 
 The workflow publishes:

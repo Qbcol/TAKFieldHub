@@ -4,10 +4,10 @@
 
 This repository contains:
 
-- **Field TAK Hub 2.0.1 RC2 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
-- **Field TAK Hub Builder 2.1.0 RC4 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
+- **Field TAK Hub 2.0.1 RC3 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
+- **Field TAK Hub Builder 2.1.0 RC5 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
 
-> Status: **Release Candidate 2 (Android) / Release Candidate 3 (Builder)**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
+> Status: **Release Candidate 3 (Android) / Release Candidate 5 (Builder)**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
 
 ## Key features
 
@@ -31,9 +31,9 @@ This repository contains:
 
 ### Windows Builder
 
-Builder 2.1.0 RC4 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC4_FROM_SCRATCH_EN.md`.
+Builder 2.1.0 RC5 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC4_FROM_SCRATCH_EN.md` (workspace flow remains valid for RC5).
 
-RC4 restores the clearer pre-dark-theme Builder layout while retaining the 1.9 application icon. It also adds **Import legacy 1.x ZIP**: a signed 1.x deployment can be verified (RSA + SHA-256), migrated into a fresh 2.x project and rebuilt as an Ed25519-signed `.ftak` v2. A single ATAK APK placed in `source/atak/` is now emitted as `payload/atak/atak.apk` instead of being nested inside the Mission Package.
+RC5 keeps the clearer pre-dark-theme Builder layout while retaining the 1.9 application icon. It also adds **Import legacy 1.x ZIP**: a signed 1.x deployment can be verified (RSA + SHA-256), migrated into a fresh 2.x project and rebuilt as an Ed25519-signed `.ftak` v2. A single ATAK APK placed in `source/atak/` is now emitted as `payload/atak/atak.apk` instead of being nested inside the Mission Package.
 
 
 - portable `.fthproj` projects with relative source/output paths
@@ -46,6 +46,7 @@ RC4 restores the clearer pre-dark-theme Builder layout while retaining the 1.9 a
 - Ed25519 publisher signing with DPAPI-protected local key
 - encrypted `.fthkey` publisher-key backup/restore using PBKDF2-SHA256 + AES-256-GCM
 - LAN HTTP distribution with expiring token, max-download limit and HTTP Range/206 support
+- external/cloud HTTPS distribution with direct `.ftak` link test, SHA-256-bound QR and PNG export
 - QR deep links (`fieldtak://provision?...`)
 - **Polish and English UI**
 - keyboard/Narrator/DPI/high-contrast friendly WPF controls
@@ -123,7 +124,7 @@ The gate verifies version consistency, PL/EN resource parity, JSON/XML/XAML synt
 - web: `8443`
 - ATAK target: `5.6` through `5.8`
 
-These are **example/default values only**. In Builder 2.1.0 RC4 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
+These are **example/default values only**. In Builder 2.1.0 RC5 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
 
 ## Typical field workflow
 
@@ -138,9 +139,9 @@ Edit/test TAK server
     ↓
 Analyze → Build Preview → Build .ftak
     ↓
-Start LAN distribution / publish HTTPS asset
+Start LAN distribution OR paste/test direct cloud HTTPS URL
     ↓
-Show QR
+Generate/show QR
 
 Player
     ↓
@@ -159,7 +160,7 @@ Confirm final authenticated ATAK connection inside ATAK
 
 ## Update system
 
-The Hub and Builder can check GitHub Releases. The default repository is `Qbcol/field-tak-hub`; change it before publishing if your actual repository path differs.
+The Hub and Builder can check GitHub Releases. The default repository is `Qbcol/TAKFieldHub`; change it before publishing if your actual repository path differs.
 
 - Android default is compiled through `BuildConfig.UPDATE_REPOSITORY`.
 - Builder reads `update-config.json` next to the executable.
@@ -177,7 +178,7 @@ The project intentionally does **not** write into ATAK's private `Android/data` 
 
 Provisioning downloads may use HTTP **only for private/loopback LAN addresses** so the Windows Builder can work without Internet access. Public provisioning and all application updates require HTTPS. Every `.ftak` package is still verified with SHA-256 and Ed25519 before use.
 
-Field TAK Hub cannot directly inspect ATAK's private certificate store or prove an authenticated CoT session on stock Android, so those states are reported as **UNVERIFIED** rather than falsely marked successful.
+The QR scanner can hand ATAK/OpenTAK `tak://.../enroll` and `tak://.../import` URIs to ATAK without persisting enrollment tokens. Field TAK Hub cannot directly inspect ATAK's private certificate store or prove an authenticated CoT session on stock Android, so those states are reported as **UNVERIFIED** rather than falsely marked successful.
 
 Read [`SECURITY.md`](SECURITY.md) and [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md) before using real certificates.
 
@@ -191,6 +192,7 @@ Read [`SECURITY.md`](SECURITY.md) and [`docs/SECURITY_MODEL.md`](docs/SECURITY_M
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — architecture overview
 - [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) — RC → Stable checklist
 - [`docs/RC2_VALIDATION.md`](docs/RC2_VALIDATION.md) — checks performed and remaining release gates
+- [`TEST_DZISIAJ_RC3_RC5_PL.md`](TEST_DZISIAJ_RC3_RC5_PL.md) — szybki scenariusz testu RC3/RC5 na telefonie i w Builderze
 
 ## Release policy
 

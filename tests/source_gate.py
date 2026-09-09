@@ -89,6 +89,14 @@ for token in ('NewProject_Click', 'ProjectFolder_Drop', 'RepairFolders_Click'):
     if token not in main_xaml: fail(f'Builder project-folder UI missing {token}')
 for token in ('ImportLegacy_Click', 'ImportLegacy'):
     if token not in main_xaml: fail(f'Builder legacy-import UI missing {token}')
+for token in ('CloudDistribution','GenerateCloudQr_Click','TestCloudLink_Click','CloudPackageBox','CloudUrlBox'):
+    if token not in main_xaml: fail(f'Builder cloud-distribution UI missing {token}')
+cloud=ROOT/'apps/builder/FieldTakHub.Builder/Services/CloudDistributionService.cs'
+if not cloud.exists(): fail('Builder CloudDistributionService missing')
+else:
+    cloud_text=cloud.read_text(encoding='utf-8')
+    for token in ('RequireHttps','CreateDeepLink','SHA256.HashData','packageUrl=','packageBytes=','expiresUtc='):
+        if token not in cloud_text: fail(f'Builder cloud distribution contract missing {token}')
 legacy=ROOT/'apps/builder/FieldTakHub.Builder/Services/LegacyPackageImporter.cs'
 if not legacy.exists(): fail('Builder legacy 1.x importer missing')
 else:
@@ -112,6 +120,14 @@ for token in ('0xFF0B1114','0xFF102127','0xFF28E0D7','0xFFFF3B4E','0xFF59D17D'):
 manifest_text=read('apps/android/app/src/main/AndroidManifest.xml')
 for token in ('android:icon="@mipmap/ic_launcher"','android:roundIcon="@mipmap/ic_launcher_round"'):
     if token not in manifest_text: fail(f'Android launcher icon contract missing {token}')
+
+# Universal QR routing: cloud .ftak, OpenTAK/ATAK enrollment and data-package import.
+provisioning=read('apps/android/app/src/main/java/org/fieldtak/hub/provision/ProvisioningController.kt')
+for token in ('handleInput','packageUrl','openTakUri','openTakImportUrl'):
+    haystack=vm if token in ('handleInput','packageUrl') else provisioning
+    if token not in haystack: fail(f'Android universal QR contract missing {token}')
+for token in ('ACTION_MANAGE_UNKNOWN_APP_SOURCES','canRequestPackageInstalls'):
+    if token not in provisioning: fail(f'Android unknown-sources handoff missing {token}')
 for asset in ('apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml','apps/builder/FieldTakHub.Builder/Assets/tak-field-hub-icon-1.9.png','apps/builder/FieldTakHub.Builder/Assets/tak-field-hub-builder.ico'):
     if not (ROOT/asset).exists(): fail(f'Missing 1.9 visual asset: {asset}')
 

@@ -25,13 +25,13 @@ Each GitHub Release includes `fieldtak-release.json`:
   "version": 1,
   "channel": "rc",
   "hub": {
-    "version": "2.0.1-rc2",
+    "version": "2.0.1-rc3",
     "versionCode": 20101,
     "asset": "FieldTAKHub-2.0.1-RC2.apk",
     "sha256": "..."
   },
   "builder": {
-    "version": "2.1.0-rc4",
+    "version": "2.1.0-rc5",
     "asset": "FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip",
     "sha256": "..."
   }
@@ -61,7 +61,7 @@ Every redirect is revalidated as HTTPS.
 
 ## Repository setting
 
-The default example repository is `Qbcol/field-tak-hub`.
+The default example repository is `Qbcol/TAKFieldHub`.
 
 Before the first public release, set the actual repository path consistently in:
 

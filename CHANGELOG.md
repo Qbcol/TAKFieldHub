@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.1 RC3 / Builder 2.1.0 RC5 — 2026-09-09
+
+### Android
+- fixed `FINISH CONFIGURATION` / `DOKOŃCZ KONFIGURACJĘ` when ATAK is missing and install-source permission is not yet granted;
+- automatically opens the per-app unknown-sources setting and resumes after permission is granted;
+- added universal QR routing for Field TAK cloud provisioning, OpenTAK/ATAK enrollment and ATAK data-package import;
+- supports `tak://com.atakmap.app/enroll?...` and `tak://com.atakmap.app/import?url=...` without persisting enrollment tokens;
+- supports direct `.ftak` HTTPS URLs and OTS-style `/api/data_packages...` links;
+- kept the RC2 Android layout unchanged.
+
+### Builder
+- added **External / cloud distribution** next to LAN;
+- added local `.ftak` selector, direct HTTPS URL test, SHA-256-bound cloud QR, copy deep-link and QR PNG export;
+- cloud QR includes package URL, SHA-256, byte size and expiry;
+- cloud link test keeps normal TLS certificate validation and rejects HTML landing pages/public HTTP.
+
+
 ## 2.0.1 RC2 / Builder 2.1.0 RC4 — 2026-09-09
 
 ### Builder
