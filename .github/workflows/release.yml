@@ -36,11 +36,11 @@ jobs:
           & $signtool.FullName sign /fd SHA256 /td SHA256 /tr http://timestamp.digicert.com /f release-cert.pfx /p $env:CERT_PASSWORD release/windows/FieldTakHub.Builder.exe
       - name: Package Builder
         shell: pwsh
-        run: Compress-Archive -Path release/windows/* -DestinationPath release/FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip -Force
+        run: Compress-Archive -Path release/windows/* -DestinationPath release/FieldTAKHub-Builder-2.1.0-RC5-win-x64.zip -Force
       - uses: actions/upload-artifact@v4
         with:
           name: windows-release
-          path: release/FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip
+          path: release/FieldTAKHub-Builder-2.1.0-RC5-win-x64.zip
 
   android:
     needs: gate
@@ -78,11 +78,11 @@ jobs:
         run: gradle testDebugUnitTest assembleRelease --stacktrace
       - run: |
           mkdir -p release/android
-          cp apps/android/app/build/outputs/apk/release/app-release.apk release/android/FieldTAKHub-2.0.1-RC2.apk
+          cp apps/android/app/build/outputs/apk/release/app-release.apk release/android/FieldTAKHub-2.0.1-RC3.apk
       - uses: actions/upload-artifact@v4
         with:
           name: android-release
-          path: release/android/FieldTAKHub-2.0.1-RC2.apk
+          path: release/android/FieldTAKHub-2.0.1-RC3.apk
 
   publish:
     needs: [windows, android]
@@ -96,18 +96,18 @@ jobs:
           path: release-assets
       - name: Create update manifest and checksums
         run: |
-          HUB=$(find release-assets -name 'FieldTAKHub-2.0.1-RC2.apk' -print -quit)
-          BUILDER=$(find release-assets -name 'FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip' -print -quit)
+          HUB=$(find release-assets -name 'FieldTAKHub-2.0.1-RC3.apk' -print -quit)
+          BUILDER=$(find release-assets -name 'FieldTAKHub-Builder-2.1.0-RC5-win-x64.zip' -print -quit)
           python scripts/generate-release-manifest.py --root . --hub "$HUB" --builder "$BUILDER" --out fieldtak-release.json
           cp "$HUB" .
           cp "$BUILDER" .
-          sha256sum FieldTAKHub-2.0.1-RC2.apk FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip fieldtak-release.json > SHA256SUMS.txt
+          sha256sum FieldTAKHub-2.0.1-RC3.apk FieldTAKHub-Builder-2.1.0-RC5-win-x64.zip fieldtak-release.json > SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(github.ref_name, '-rc') }}
           generate_release_notes: true
           files: |
-            FieldTAKHub-2.0.1-RC2.apk
-            FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip
+            FieldTAKHub-2.0.1-RC3.apk
+            FieldTAKHub-Builder-2.1.0-RC5-win-x64.zip
             fieldtak-release.json
             SHA256SUMS.txt
