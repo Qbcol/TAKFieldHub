@@ -14,7 +14,7 @@ public sealed class MissionPackageBuilder
     {
         var files = Directory.Exists(sourceAtakDirectory)
             ? Directory.EnumerateFiles(sourceAtakDirectory, "*", SearchOption.AllDirectories)
-                .Where(f => !IsUserManifest(sourceAtakDirectory, f)).ToList()
+                .Where(f => !IsUserManifest(sourceAtakDirectory, f) && !Path.GetExtension(f).Equals(".apk", StringComparison.OrdinalIgnoreCase)).ToList()
             : new List<string>();
 
         var entries = files.Select(file => new Entry(

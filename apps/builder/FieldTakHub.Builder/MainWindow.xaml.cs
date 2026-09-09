@@ -21,6 +21,7 @@ public partial class MainWindow : Window
     private readonly SigningKeyService _signing = new();
     private readonly UpdateService _updates = new();
     private readonly WorkspaceService _workspace = new();
+    private readonly LegacyPackageImporter _legacy = new();
     private IReadOnlyList<ContentItem> _items = Array.Empty<ContentItem>();
     private string? _lastPackage;
     private bool _languageReady;
@@ -160,6 +161,34 @@ public partial class MainWindow : Window
             }
             catch(Exception ex){Error(ex);}
         }
+    }
+
+    private void ImportLegacy_Click(object sender, RoutedEventArgs e)
+    {
+        var d = new OpenFileDialog
+        {
+            Filter = T("LegacyZipFilter", "TAK Field Hub 1.x ZIP (*.zip)|*.zip|All files (*.*)|*.*"),
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+        };
+        if (d.ShowDialog() != true) return;
+        try
+        {
+            var publisher = string.IsNullOrWhiteSpace(PublisherBox.Text) ? Environment.UserName : PublisherBox.Text.Trim();
+            var expiry = int.TryParse(ExpiryBox.Text, out var h) ? Math.Max(1, h) : 72;
+            var maxDownloads = int.TryParse(MaxDownloadsBox.Text, out var md) ? Math.Max(1, md) : 50;
+            var result = _legacy.Import(d.FileName, _workspace, publisher, expiry, maxDownloads);
+            _projects.Save(result.ProjectFile, result.Project);
+            _currentProjectPath = result.ProjectFile;
+            ToUi(result.Project);
+            EnsureCurrentStructure(log:false);
+            _items = _analyzer.Analyze(result.Project.SourceDirectory);
+            ContentList.ItemsSource = _items;
+            RefreshFolderCounts();
+            var sig = result.SignatureVerified ? T("LegacyVerified", "verified") : T("LegacyNotPresent", "not present");
+            Log(string.Format(T("LogLegacyImported", "Imported legacy 1.x ZIP into a new 2.x project. Files: {0}; RSA signature: {1}; SHA-256: OK. Project: {2}"), result.ImportedFiles, sig, result.ProjectFile));
+            MessageBox.Show(string.Format(T("LegacyImportSummary", "Legacy package imported successfully.\n\nFiles: {0}\nRSA signature: {1}\nSHA-256: OK\n\nClick BUILD PACKAGE to create a new Ed25519-signed .ftak v2."), result.ImportedFiles, sig), T("ImportLegacy", "Import legacy 1.x ZIP"), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch(Exception ex){ Error(ex); }
     }
 
     private void NewProject_Click(object sender, RoutedEventArgs e)
@@ -317,7 +346,7 @@ public partial class MainWindow : Window
         {
             var update=await _updates.CheckAsync();
             if(update==null){if(!silent)Log(T("NoBuilderUpdate","No newer Builder release on the configured channel."));return;}
-            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc3",update.Version));
+            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc4",update.Version));
             if(silent)return;
             if(MessageBox.Show(string.Format(T("BuilderUpdatePrompt","Builder {0} is available. Download the verified ZIP now?"),update.Version),T("UpdateTitle","Field TAK Hub Update"),MessageBoxButton.YesNo,MessageBoxImage.Information)!=MessageBoxResult.Yes)return;
             var path=await _updates.DownloadAsync(update); Log(string.Format(T("UpdateDownloaded","Update downloaded and SHA-256 verified: {0}"),path)); UpdateService.ShowInExplorer(path);

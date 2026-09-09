@@ -18,6 +18,7 @@ public sealed class SourceAnalyzer
     {
         var rel = Path.GetRelativePath(root, path).Replace('\\','/').ToLowerInvariant();
         var ext = Path.GetExtension(path).ToLowerInvariant();
+        if (rel.StartsWith("atak/") && ext == ".apk") return "ATAK APK";
         if (rel.StartsWith("atak/")) return "ATAK Mission Package";
         if (rel.StartsWith("plugins/") || ext == ".apk") return "Plugin APK";
         if (rel.StartsWith("maps/") || ext is ".mbtiles" or ".gpkg" or ".sqlite") return "Map";

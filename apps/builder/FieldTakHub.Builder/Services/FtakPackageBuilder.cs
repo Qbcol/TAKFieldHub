@@ -25,6 +25,18 @@ public sealed class FtakPackageBuilder
             var payload = Path.Combine(staging, "payload");
             Directory.CreateDirectory(payload);
             var atakRoot = Path.Combine(project.SourceDirectory, "atak");
+            var atakApks = Directory.Exists(atakRoot)
+                ? Directory.EnumerateFiles(atakRoot, "*.apk", SearchOption.AllDirectories).ToList()
+                : new List<string>();
+            if (atakApks.Count > 1)
+                throw new InvalidDataException("FTH-BLD-006: source/atak may contain only one ATAK APK. Remove older/duplicate ATAK APK files before building.");
+            if (atakApks.Count == 1)
+            {
+                var atakDest = Path.Combine(payload, "atak", "atak.apk");
+                Directory.CreateDirectory(Path.GetDirectoryName(atakDest)!);
+                File.Copy(atakApks[0], atakDest, true);
+            }
+
             var missionOut = Path.Combine(payload, "atak", "mission-package.zip");
             var missionCreated = _missionBuilder.Build(atakRoot, missionOut, project.Name, project.Server);
 

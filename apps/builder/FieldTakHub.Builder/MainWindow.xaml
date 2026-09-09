@@ -9,25 +9,21 @@
 
     <ScrollViewer Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Margin="0,0,14,0" VerticalScrollBarVisibility="Auto">
       <StackPanel>
-        <Grid Margin="0,0,0,12">
-          <Grid.ColumnDefinitions><ColumnDefinition Width="72"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-          <Border Grid.Column="0" Width="62" Height="62" CornerRadius="8" BorderBrush="{StaticResource BrandCyanBrush}" BorderThickness="1" Background="{StaticResource BrandBackgroundBrush}" Padding="3" VerticalAlignment="Top">
-            <Image Source="Assets/tak-field-hub-icon-1.9.png" Stretch="Uniform" AutomationProperties.Name="Field TAK Hub icon"/>
-          </Border>
-          <StackPanel Grid.Column="1" VerticalAlignment="Center">
-            <TextBlock Text="{DynamicResource HeaderTitle}" FontWeight="Black" FontSize="24" Foreground="{StaticResource BrandTextBrush}"/>
-            <TextBlock Text="{DynamicResource Tagline}" FontWeight="SemiBold" Foreground="{StaticResource BrandCyanBrush}"/>
-            <TextBlock Text="{DynamicResource HeaderVersion}" Foreground="{StaticResource BrandMutedBrush}"/>
+        <DockPanel LastChildFill="False">
+          <StackPanel DockPanel.Dock="Left">
+            <TextBlock Text="{DynamicResource HeaderTitle}" FontWeight="Bold" FontSize="24"/>
+            <TextBlock Text="{DynamicResource HeaderVersion}" Foreground="Gray" Margin="0,0,0,12"/>
           </StackPanel>
-          <ComboBox x:Name="LanguageBox" Grid.Column="2" Width="120" VerticalAlignment="Top" SelectionChanged="LanguageBox_SelectionChanged" AutomationProperties.Name="{DynamicResource Language}">
+          <ComboBox x:Name="LanguageBox" DockPanel.Dock="Right" Width="115" SelectionChanged="LanguageBox_SelectionChanged" AutomationProperties.Name="{DynamicResource Language}">
             <ComboBoxItem Tag="en" Content="{DynamicResource English}" IsSelected="True"/>
             <ComboBoxItem Tag="pl" Content="{DynamicResource Polish}"/>
           </ComboBox>
-        </Grid>
+        </DockPanel>
 
         <TextBlock Text="{DynamicResource Project}" FontWeight="Bold" FontSize="16"/>
         <WrapPanel Margin="0,0,0,4">
-          <Button Content="{DynamicResource NewProject}" Click="NewProject_Click" Style="{StaticResource PrimaryButton}" AutomationProperties.Name="{DynamicResource NewProject}"/>
+          <Button Content="{DynamicResource NewProject}" Click="NewProject_Click" FontWeight="SemiBold" AutomationProperties.Name="{DynamicResource NewProject}"/>
+          <Button Content="{DynamicResource ImportLegacy}" Click="ImportLegacy_Click" AutomationProperties.Name="{DynamicResource ImportLegacy}"/>
           <Button Content="{DynamicResource LoadProject}" Click="LoadProject_Click" AutomationProperties.Name="{DynamicResource LoadProject}"/>
           <Button Content="{DynamicResource SaveProject}" Click="SaveProject_Click" AutomationProperties.Name="{DynamicResource SaveProject}"/>
           <Button Content="{DynamicResource OpenProjectFolder}" Click="OpenProjectFolder_Click" AutomationProperties.Name="{DynamicResource OpenProjectFolder}"/>
@@ -37,10 +33,10 @@
         <TextBlock Text="{DynamicResource Version}"/><TextBox x:Name="VersionBox" Text="1.0.0" AutomationProperties.Name="{DynamicResource Version}"/>
         <TextBlock Text="{DynamicResource Publisher}"/><TextBox x:Name="PublisherBox" AutomationProperties.Name="{DynamicResource Publisher}"/>
 
-        <Border Style="{StaticResource PanelBorder}" Margin="0,8,0,0">
+        <Border BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,8,0,0">
           <StackPanel>
             <TextBlock Text="{DynamicResource ProjectFolders}" FontWeight="Bold" FontSize="15"/>
-            <TextBlock Text="{DynamicResource ProjectFoldersHelp}" TextWrapping="Wrap" Foreground="{StaticResource BrandMutedBrush}" Margin="0,2,0,6"/>
+            <TextBlock Text="{DynamicResource ProjectFoldersHelp}" TextWrapping="Wrap" Foreground="Gray" Margin="0,2,0,6"/>
             <UniformGrid Columns="2">
               <Border Margin="2" Padding="3" AllowDrop="True" Tag="atak" DragOver="ProjectFolder_DragOver" Drop="ProjectFolder_Drop"><DockPanel><TextBlock x:Name="AtakCountText" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0"/><Button Content="{DynamicResource FolderAtak}" Tag="atak" Click="OpenSourceFolder_Click"/></DockPanel></Border>
               <Border Margin="2" Padding="3" AllowDrop="True" Tag="plugins" DragOver="ProjectFolder_DragOver" Drop="ProjectFolder_Drop"><DockPanel><TextBlock x:Name="PluginsCountText" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0"/><Button Content="{DynamicResource FolderPlugins}" Tag="plugins" Click="OpenSourceFolder_Click"/></DockPanel></Border>
@@ -59,10 +55,10 @@
         <TextBlock Text="{DynamicResource AtakTarget}" FontWeight="Bold" FontSize="16" Margin="0,8,0,0"/>
         <DockPanel><TextBlock Text="{DynamicResource Min}" VerticalAlignment="Center" Width="40"/><TextBox x:Name="AtakMinBox" Width="110" Text="5.6"/><TextBlock Text="{DynamicResource Max}" VerticalAlignment="Center" Margin="16,0,0,0" Width="40"/><TextBox x:Name="AtakMaxBox" Width="110" Text="5.8"/></DockPanel>
 
-        <Border Style="{StaticResource PanelBorder}" Margin="0,12,0,0">
+        <Border BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,12,0,0">
           <StackPanel>
             <TextBlock Text="{DynamicResource ServerConfig}" FontWeight="Bold" FontSize="16"/>
-            <TextBlock Text="{DynamicResource ServerHelp}" TextWrapping="Wrap" Foreground="{StaticResource BrandMutedBrush}" Margin="0,2,0,8"/>
+            <TextBlock Text="{DynamicResource ServerHelp}" TextWrapping="Wrap" Foreground="Gray" Margin="0,2,0,8"/>
             <TextBlock Text="{DynamicResource Type}"/><TextBox x:Name="ServerTypeBox" Text="OpenTAK"/>
             <TextBlock Text="{DynamicResource ServerName}"/><TextBox x:Name="ServerNameBox" Text="GGZS OpenTAK"/>
             <TextBlock Text="{DynamicResource Host}"/><TextBox x:Name="HostBox" Text="ggzstak.duckdns.org"/>
@@ -75,16 +71,16 @@
             <WrapPanel Margin="0,8,0,0">
               <Button Content="{DynamicResource LoadServerTxt}" Click="LoadServerTxt_Click"/>
               <Button Content="{DynamicResource SaveServerTxt}" Click="SaveServerTxt_Click"/>
-              <Button Content="{DynamicResource TestServer}" Click="TestServer_Click" Style="{StaticResource PrimaryButton}"/>
+              <Button Content="{DynamicResource TestServer}" Click="TestServer_Click" FontWeight="SemiBold"/>
             </WrapPanel>
-            <TextBlock Text="{DynamicResource ServerDefaultsNote}" TextWrapping="Wrap" Foreground="{StaticResource BrandMutedBrush}" Margin="0,6,0,0"/>
+            <TextBlock Text="{DynamicResource ServerDefaultsNote}" TextWrapping="Wrap" Foreground="Gray" Margin="0,6,0,0"/>
           </StackPanel>
         </Border>
 
         <DockPanel Margin="0,8,0,0"><TextBlock Text="{DynamicResource QrValidity}" VerticalAlignment="Center"/><TextBox x:Name="ExpiryBox" Width="75" Text="6"/></DockPanel>
         <DockPanel><TextBlock Text="{DynamicResource MaxDownloads}" VerticalAlignment="Center"/><TextBox x:Name="MaxDownloadsBox" Width="75" Text="50"/></DockPanel>
 
-        <Border Style="{StaticResource PanelBorder}" Margin="0,12,0,0">
+        <Border BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,12,0,0">
           <StackPanel>
             <TextBlock Text="{DynamicResource Security}" FontWeight="Bold" FontSize="16"/>
             <TextBlock><Run Text="{DynamicResource Fingerprint}"/><Run Text=": "/><Run x:Name="FingerprintRun"/></TextBlock>
@@ -95,10 +91,10 @@
         <WrapPanel Margin="0,10,0,0">
           <Button Content="{DynamicResource RepairFolders}" Click="RepairFolders_Click"/>
           <Button Content="{DynamicResource Analyze}" Click="Analyze_Click"/>
-          <Button Content="{DynamicResource BuildPackage}" Click="Build_Click" Style="{StaticResource PrimaryButton}"/>
+          <Button Content="{DynamicResource BuildPackage}" Click="Build_Click" FontWeight="Bold"/>
         </WrapPanel>
         <Button Content="{DynamicResource CheckUpdates}" Click="CheckUpdates_Click" HorizontalAlignment="Left"/>
-        <TextBlock Text="{DynamicResource AccessibilityHint}" TextWrapping="Wrap" Foreground="{StaticResource BrandMutedBrush}" Margin="4,4,4,8"/>
+        <TextBlock Text="{DynamicResource AccessibilityHint}" TextWrapping="Wrap" Foreground="Gray" Margin="4,4,4,8"/>
       </StackPanel>
     </ScrollViewer>
 
@@ -115,18 +111,18 @@
       </GroupBox>
 
       <WrapPanel Grid.Row="1" Margin="0,10">
-        <Button Content="{DynamicResource StartLan}" Click="StartServer_Click" Style="{StaticResource PrimaryButton}"/>
-        <Button Content="{DynamicResource Stop}" Click="StopServer_Click" Style="{StaticResource DangerButton}"/>
+        <Button Content="{DynamicResource StartLan}" Click="StartServer_Click"/>
+        <Button Content="{DynamicResource Stop}" Click="StopServer_Click"/>
         <TextBlock x:Name="UrlText" Margin="12,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
       </WrapPanel>
 
       <Grid Grid.Row="2">
         <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-        <Border BorderBrush="{StaticResource BrandBorderBrush}" Background="White" BorderThickness="1" Padding="8" Margin="0,0,12,0"><Image x:Name="QrImage" Stretch="Uniform" AutomationProperties.Name="Provisioning QR code"/></Border>
+        <Border BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,0,12,0"><Image x:Name="QrImage" Stretch="Uniform" AutomationProperties.Name="Provisioning QR code"/></Border>
         <GroupBox Grid.Column="1" Header="{DynamicResource StatusDetails}"><TextBox x:Name="StatusBox" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource StatusDetails}"/></GroupBox>
       </Grid>
     </Grid>
 
-    <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{DynamicResource Footer}" Foreground="{StaticResource BrandMutedBrush}" HorizontalAlignment="Right" Margin="0,12,0,0"/>
+    <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{DynamicResource Footer}" Foreground="Gray" HorizontalAlignment="Right" Margin="0,12,0,0"/>
   </Grid>
 </Window>

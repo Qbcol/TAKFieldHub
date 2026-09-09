@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>FieldTakHub.Builder</AssemblyName>
     <RootNamespace>FieldTakHub.Builder</RootNamespace>
-    <Version>2.1.0-rc3</Version>
+    <Version>2.1.0-rc4</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\tak-field-hub-builder.ico</ApplicationIcon>
   </PropertyGroup>
