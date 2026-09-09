@@ -63,4 +63,23 @@ public class BuilderCoreTests
         Assert.Single(items); Assert.Equal("plugins/plugin.apk",items[0].RelativePath);
     }
 
+    [Fact]
+    public void CloudQrBindsHttpsUrlToLocalPackageHash()
+    {
+        var dir=Path.Combine(Path.GetTempPath(),"fth-cloud-"+Guid.NewGuid().ToString("N")); Directory.CreateDirectory(dir);
+        var ftak=Path.Combine(dir,"test.ftak"); File.WriteAllBytes(ftak,new byte[]{1,2,3,4,5});
+        var deep=CloudDistributionService.CreateDeepLink("https://example.org/test.ftak",ftak,DateTimeOffset.Parse("2030-01-01T00:00:00Z"),"Test Package");
+        Assert.StartsWith("fieldtak://provision?",deep);
+        Assert.Contains("packageUrl=https%3A%2F%2Fexample.org%2Ftest.ftak",deep);
+        Assert.Contains("sha256=",deep); Assert.Contains("packageBytes=5",deep); Assert.Contains("expiresUtc=",deep);
+    }
+
+    [Fact]
+    public void CloudQrRejectsPlainHttp()
+    {
+        var dir=Path.Combine(Path.GetTempPath(),"fth-cloud-"+Guid.NewGuid().ToString("N")); Directory.CreateDirectory(dir);
+        var ftak=Path.Combine(dir,"test.ftak"); File.WriteAllText(ftak,"x");
+        Assert.Throws<InvalidDataException>(()=>CloudDistributionService.CreateDeepLink("http://example.org/test.ftak",ftak,DateTimeOffset.UtcNow.AddHours(1),"Test"));
+    }
+
 }

@@ -1,8 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=System.Runtime">
-  <sys:String x:Key="WindowTitle">Field TAK Hub Builder 2.1.0 RC4</sys:String>
+  <sys:String x:Key="WindowTitle">Field TAK Hub Builder 2.1.0 RC5</sys:String>
   <sys:String x:Key="HeaderTitle">FIELD TAK HUB BUILDER</sys:String>
   <sys:String x:Key="Tagline">PROVISION • DEPLOY • READY</sys:String>
-  <sys:String x:Key="HeaderVersion">Builder 2.1.0 RC4 • Hub 2.0.1 RC2</sys:String>
+  <sys:String x:Key="HeaderVersion">Builder 2.1.0 RC5 • Hub 2.0.1 RC3</sys:String>
   <sys:String x:Key="Project">Projekt</sys:String><sys:String x:Key="Name">Nazwa</sys:String><sys:String x:Key="PackageId">ID pakietu</sys:String><sys:String x:Key="Version">Wersja</sys:String><sys:String x:Key="Publisher">Wydawca</sys:String>
   <sys:String x:Key="Source">Źródło</sys:String><sys:String x:Key="Output">Katalog wyjściowy</sys:String><sys:String x:Key="Browse">_Wybierz</sys:String>
   <sys:String x:Key="AtakTarget">Docelowa wersja ATAK</sys:String><sys:String x:Key="Min">Min</sys:String><sys:String x:Key="Max">Max</sys:String>
@@ -40,7 +40,7 @@
   <sys:String x:Key="UpdateDownloaded">Pobrano aktualizację i zweryfikowano SHA-256: {0}</sys:String>
   <sys:String x:Key="UpdateSkipped">Pominięto sprawdzanie aktualizacji: {0}</sys:String>
   <sys:String x:Key="ErrorPrefix">BŁĄD</sys:String>
-  <sys:String x:Key="Footer">Field TAK Hub 2.0.1 RC2 — Builder 2.1.0 RC4</sys:String>
+  <sys:String x:Key="Footer">Field TAK Hub 2.0.1 RC3 — Builder 2.1.0 RC5</sys:String>
   <sys:String x:Key="ImportLegacy">_Importuj ZIP 1.x</sys:String><sys:String x:Key="LegacyZipFilter">TAK Field Hub 1.x ZIP (*.zip)|*.zip|Wszystkie pliki (*.*)|*.*</sys:String><sys:String x:Key="LegacyVerified">zweryfikowany</sys:String><sys:String x:Key="LegacyNotPresent">brak</sys:String>
   <sys:String x:Key="LogLegacyImported">Zaimportowano ZIP 1.x do nowego projektu 2.x. Pliki: {0}; podpis RSA: {1}; SHA-256: OK. Projekt: {2}</sys:String><sys:String x:Key="LegacyImportSummary">Pakiet legacy zaimportowano poprawnie.\n\nPliki: {0}\nPodpis RSA: {1}\nSHA-256: OK\n\nKliknij BUDUJ PAKIET, aby utworzyć nowy .ftak v2 podpisany Ed25519.</sys:String>
   <sys:String x:Key="NewProject">_Nowy projekt</sys:String><sys:String x:Key="CreateProject">_Utwórz projekt</sys:String><sys:String x:Key="NewProjectHelp">Builder automatycznie utworzy pełną strukturę folderów projektu.</sys:String>
@@ -48,4 +48,24 @@
   <sys:String x:Key="FolderAtak">ATAK</sys:String><sys:String x:Key="FolderPlugins">Pluginy</sys:String><sys:String x:Key="FolderMaps">Mapy</sys:String><sys:String x:Key="FolderOverlays">Nakładki</sys:String><sys:String x:Key="FolderConfig">Config</sys:String><sys:String x:Key="FolderData">Dane</sys:String>
   <sys:String x:Key="ProjectNameRequired">Wpisz nazwę projektu.</sys:String><sys:String x:Key="PackageIdRequired">Wpisz ID pakietu.</sys:String>
   <sys:String x:Key="LogProjectCreated">Utworzono projekt: {0}</sys:String><sys:String x:Key="LogFoldersRepaired">Sprawdzono foldery projektu i utworzono brakujące katalogi.</sys:String><sys:String x:Key="LogFilesDropped">Skopiowano {0} plik(ów) do {1}.</sys:String>
+
+  <sys:String x:Key="DistributionLan">Dystrybucja LAN</sys:String>
+  <sys:String x:Key="CloudDistribution">Dystrybucja zewnętrzna / chmura</sys:String>
+  <sys:String x:Key="CloudHelp">Wgraj dokładnie ten plik .ftak do magazynu HTTPS, wklej bezpośredni link pobierania, przetestuj go i wygeneruj QR powiązany z lokalnym SHA-256.</sys:String>
+  <sys:String x:Key="LocalPackage">Lokalny pakiet .ftak</sys:String>
+  <sys:String x:Key="ExternalPackageUrl">Bezpośredni link HTTPS do wgranego .ftak</sys:String>
+  <sys:String x:Key="SelectFtak">Wybierz .ftak</sys:String>
+  <sys:String x:Key="TestCloudLink">Testuj link chmurowy</sys:String>
+  <sys:String x:Key="GenerateCloudQr">Generuj QR chmurowy</sys:String>
+  <sys:String x:Key="CopyDeepLink">Kopiuj deep-link</sys:String>
+  <sys:String x:Key="SaveQrPng">Zapisz QR PNG…</sys:String>
+  <sys:String x:Key="CloudPackageSelected">Wybrano lokalny pakiet do QR chmurowego.</sys:String>
+  <sys:String x:Key="CloudTesting">Testowanie zewnętrznego linku HTTPS…</sys:String>
+  <sys:String x:Key="LogCloudTest">TEST LINKU CHMUROWEGO\r\n{0}</sys:String>
+  <sys:String x:Key="SelectCloudPackageFirst">Wybierz dokładnie ten lokalny plik .ftak, który został wgrany do chmury.</sys:String>
+  <sys:String x:Key="CloudQrReady">QR chmurowy gotowy. Zapisano: {0}</sys:String>
+  <sys:String x:Key="LogCloudQr">Wygenerowano bezpośredni QR chmurowy. SHA-256 jest powiązany z lokalnym .ftak.\r\nPakiet: {0}\r\nLink chmurowy: {1}\r\nQR: {2}</sys:String>
+  <sys:String x:Key="GenerateQrFirst">Najpierw wygeneruj kod QR.</sys:String>
+  <sys:String x:Key="DeepLinkCopied">Skopiowano deep-link provisioningowy do schowka.</sys:String>
+  <sys:String x:Key="LogQrSaved">Zapisano QR PNG: {0}</sys:String>
 </ResourceDictionary>

@@ -16,7 +16,7 @@ data class ServiceReport(
   val checks:List<DiagnosticCheck>
 ) {
   fun asText():String = buildString {
-    appendLine("FIELD TAK HUB 2.0.1 RC2 — SERVICE REPORT")
+    appendLine("FIELD TAK HUB 2.0.1 RC3 — SERVICE REPORT")
     appendLine("UTC time: $generatedUtc")
     appendLine("Host: $host")
     appendLine()

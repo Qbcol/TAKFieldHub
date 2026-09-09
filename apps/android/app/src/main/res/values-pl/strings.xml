@@ -1,6 +1,6 @@
 <resources>
   <string name="app_name">Field TAK Hub</string>
-  <string name="app_title">Field TAK Hub 2.0.1 RC2</string>
+  <string name="app_title">Field TAK Hub 2.0.1 RC3</string>
   <string name="brand_version">Wersja %1$s</string>
   <string name="back">Wstecz</string>
   <string name="cancel">Anuluj</string>
@@ -164,4 +164,12 @@
 
   <string name="camera_permission_required">Do skanowania kodów QR wymagane jest uprawnienie do aparatu.</string>
   <string name="atak_connection">Połączenie ATAK</string>
+
+  <string name="vm_cloud_link_valid">Przyjęto bezpośredni link do paczki w chmurze</string>
+  <string name="vm_empty_qr">Zeskanowana wartość jest pusta.</string>
+  <string name="vm_unsupported_qr">Nieobsługiwany kod QR lub link.</string>
+  <string name="vm_unsupported_tak_uri">Ten URI TAK nie jest obsługiwanym kodem enrollmentu ani importu ATAK.</string>
+  <string name="vm_enrollment_missing_fields">Kod enrollmentu nie zawiera hosta, nazwy użytkownika lub tokenu.</string>
+  <string name="vm_data_package_missing_url">Kod paczki danych ATAK nie zawiera adresu pobierania.</string>
+  <string name="vm_atak_required_for_qr">ATAK CIV musi być zainstalowany, aby przekazać enrollment lub paczkę danych.</string>
 </resources>

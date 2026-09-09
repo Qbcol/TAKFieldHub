@@ -17,12 +17,12 @@ import org.fieldtak.hub.diagnostics.ServerDiagnostics
 import org.fieldtak.hub.diagnostics.ServiceReport
 import org.fieldtak.hub.model.*
 import org.fieldtak.hub.provision.ProvisioningController
+import org.fieldtak.hub.security.UrlPolicy
 import org.fieldtak.hub.util.VersionUtil
 import org.fieldtak.hub.storage.StorageMaintenance
 import org.fieldtak.hub.update.AppUpdateInfo
 import org.fieldtak.hub.update.UpdateService
 import java.io.File
-import java.net.URLDecoder
 import java.security.MessageDigest
 import java.time.Instant
 
@@ -69,6 +69,71 @@ class MainViewModel(app:Application):AndroidViewModel(app){
     val exp=(kotlin.math.ln(bytes.toDouble())/kotlin.math.ln(unit)).toInt().coerceIn(1,4)
     val prefix="KMGT"[exp-1]
     return String.format(java.util.Locale.getDefault(),"%.1f %sB",bytes/Math.pow(unit,exp.toDouble()),prefix)
+  }
+
+  /** Universal input router used by the QR scanner and manual link field.
+   * It deliberately does not persist or log tak:// enrollment tokens.
+   */
+  fun handleInput(value:String){
+    val t=value.trim()
+    if(t.isBlank()){ _state.value=_state.value.copy(error=text(R.string.vm_empty_qr)); return }
+    runCatching {
+      when {
+        t.startsWith("fieldtak://provision",true) -> {
+          val uri=Uri.parse(t)
+          val direct=uri.getQueryParameter("packageUrl")
+          if(!direct.isNullOrBlank()) {
+            val sha=uri.getQueryParameter("sha256")?.takeIf{it.isNotBlank()}
+            val bytes=uri.getQueryParameter("packageBytes")?.toLongOrNull()
+            val expires=uri.getQueryParameter("expiresUtc")?.takeIf{it.isNotBlank()}
+            fromDirectPackageUrl(direct,sha,bytes,expires,t)
+          } else fromDescriptor(t)
+        }
+        t.startsWith("tak://",true) -> handOffTakUri(t)
+        t.startsWith("https://",true) || t.startsWith("http://",true) -> {
+          val uri=Uri.parse(t)
+          val name=(uri.lastPathSegment ?: "").lowercase()
+          val path=(uri.path ?: "").lowercase()
+          when {
+            name.endsWith(".ftak") -> fromDirectPackageUrl(t,null,null,null,t)
+            name.endsWith(".zip") || name.endsWith(".dpk") || name.endsWith(".tak") || path.contains("/api/data_packages") -> handOffDataPackageUrl(t)
+            else -> fromDescriptor(t)
+          }
+        }
+        else -> error(text(R.string.vm_unsupported_qr))
+      }
+    }.onFailure { fail(it) }
+  }
+
+  private fun handOffTakUri(value:String)=viewModelScope.launch(Dispatchers.Main){
+    runCatching {
+      require(provisioning.openTakUri(value)){text(R.string.vm_atak_required_for_qr)}
+    }.onFailure { fail(it) }
+  }
+
+  private fun handOffDataPackageUrl(value:String)=viewModelScope.launch(Dispatchers.Main){
+    runCatching {
+      require(provisioning.openTakImportUrl(value)){text(R.string.vm_atak_required_for_qr)}
+    }.onFailure { fail(it) }
+  }
+
+  private fun fromDirectPackageUrl(packageUrl:String,expectedSha256:String?,packageBytes:Long?,expiresUtc:String?,source:String)=viewModelScope.launch(Dispatchers.IO){
+    runCatching {
+      val safeUrl=UrlPolicy.requireProvisioningUrl(packageUrl)
+      expiresUtc?.let { require(Instant.parse(it).isAfter(Instant.now())) { text(R.string.vm_descriptor_expired) } }
+      val freeBytes=provisioning.freeStorageBytes()
+      val requiredBytes=packageBytes?.takeIf{it>0}?.let{maxOf(512L*1024*1024,it*3)}
+      if(requiredBytes!=null) require(freeBytes>=requiredBytes){text(R.string.disk_space_problem,humanBytes(requiredBytes),humanBytes(freeBytes))}
+      var session=engine.start(source,safeUrl)
+      session=engine.transition(session,DeploymentStage.QR_SCANNED,StepResult.READY,text(R.string.vm_qr_accepted))
+      session=engine.transition(session,DeploymentStage.DESCRIPTOR_VERIFIED,StepResult.READY,text(R.string.vm_cloud_link_valid))
+      session=engine.transition(session,DeploymentStage.DOWNLOADING,StepResult.RUNNING,text(R.string.vm_downloading_resume))
+      update(session=session,busy=text(R.string.vm_downloading_package),progress=0L to null)
+      val key=stableKey(safeUrl)
+      val f=repo.downloadResumable(safeUrl,key,expectedSha256){cur,total->_state.value=_state.value.copy(downloadCurrent=cur,downloadTotal=total)}
+      session=engine.transition(session,DeploymentStage.BUNDLE_DOWNLOADED,StepResult.READY,text(R.string.vm_package_downloaded))
+      loadPackage(f,session)
+    }.onFailure { fail(it) }
   }
 
   fun fromDescriptor(value:String)=viewModelScope.launch(Dispatchers.IO){
@@ -161,8 +226,16 @@ class MainViewModel(app:Application):AndroidViewModel(app){
       val atak=provisioning.detectAtak(p.manifest.target)
       if(!atak.installed || atak.compatibility!=CheckState.READY){
         val apk=provisioning.atakApk(p.root)
-        if(apk!=null && provisioning.canInstallPackages()) { s=engine.transition(s,DeploymentStage.ATAK_READY,StepResult.ACTION_REQUIRED,text(R.string.vm_atak_installer_started)); update(session=s); withContext(Dispatchers.Main){provisioning.installApk(apk)} }
-        else { s=engine.transition(s,DeploymentStage.WAITING_FOR_USER,StepResult.ACTION_REQUIRED,atak.compatibilityMessage); update(session=s) }
+        if(apk==null){
+          s=engine.transition(s,DeploymentStage.WAITING_FOR_USER,StepResult.ACTION_REQUIRED,atak.compatibilityMessage); update(session=s); return@launch
+        }
+        if(!provisioning.canInstallPackages()){
+          s=engine.transition(s,DeploymentStage.WAITING_FOR_USER,StepResult.ACTION_REQUIRED,text(R.string.vm_allow_unknown_sources)); update(session=s)
+          withContext(Dispatchers.Main){provisioning.openUnknownSourcesSettings()}
+          return@launch
+        }
+        s=engine.transition(s,DeploymentStage.ATAK_READY,StepResult.ACTION_REQUIRED,text(R.string.vm_atak_installer_started)); update(session=s)
+        withContext(Dispatchers.Main){provisioning.installApk(apk)}
         return@launch
       }
       val pending=provisioning.pendingPlugins(p.root)
@@ -190,11 +263,24 @@ class MainViewModel(app:Application):AndroidViewModel(app){
       when(s.stage){
         DeploymentStage.PLUGINS_INSTALLING -> if(provisioning.pendingPlugins(p.root).isEmpty()) s=engine.transition(s,DeploymentStage.PLUGINS_READY,StepResult.READY,text(R.string.vm_plugin_install_complete))
         DeploymentStage.MAPS_IMPORTING -> s=engine.transition(s,DeploymentStage.MAPS_READY,StepResult.WARNING,text(R.string.vm_mission_handed))
-        DeploymentStage.ATAK_READY, DeploymentStage.WAITING_FOR_USER -> Unit
         else -> Unit
       }
       update(session=s)
-      preflight()
+
+      // Returning from the per-app "Install unknown apps" settings or from the Android
+      // package installer should continue the deployment automatically when the required
+      // condition is now satisfied. Do not reopen settings if the user denied permission.
+      val atak=provisioning.detectAtak(p.manifest.target)
+      val canContinueInstall=s.stage==DeploymentStage.WAITING_FOR_USER && provisioning.canInstallPackages() && (
+        (!atak.installed && provisioning.atakApk(p.root)!=null) ||
+        (atak.installed && provisioning.pendingPlugins(p.root).isNotEmpty())
+      )
+      val atakJustInstalled=atak.installed && s.stage==DeploymentStage.ATAK_READY
+      val pluginStepDone=s.stage==DeploymentStage.PLUGINS_READY
+      val missionReturned=s.stage==DeploymentStage.MAPS_READY
+      if(_state.value.trusted && (canContinueInstall || atakJustInstalled || pluginStepDone || missionReturned)){
+        preparePhone()
+      } else preflight()
     }
   }
 
@@ -283,7 +369,7 @@ class MainViewModel(app:Application):AndroidViewModel(app){
     val path=s.localPackagePath
     if(path.isNullOrBlank()){
       if(s.stage in setOf(DeploymentStage.DOWNLOADING,DeploymentStage.DESCRIPTOR_VERIFIED,DeploymentStage.QR_SCANNED) && !s.sourceDescriptor.isNullOrBlank()){
-        fromDescriptor(s.sourceDescriptor); return
+        handleInput(s.sourceDescriptor); return
       }
       return
     }
@@ -332,8 +418,10 @@ class MainViewModel(app:Application):AndroidViewModel(app){
 
   private fun normalize(v:String):String {
     val t=v.trim()
-    return if(t.startsWith("fieldtak://provision")) {
-      val uri=Uri.parse(t); uri.getQueryParameter("url")?.let{URLDecoder.decode(it,"UTF-8")} ?: error(text(R.string.vm_qr_missing_url))
+    return if(t.startsWith("fieldtak://provision",true)) {
+      val uri=Uri.parse(t)
+      // Uri.getQueryParameter already URL-decodes once. A second decode corrupts valid % characters.
+      uri.getQueryParameter("url") ?: error(text(R.string.vm_qr_missing_url))
     } else t
   }
 

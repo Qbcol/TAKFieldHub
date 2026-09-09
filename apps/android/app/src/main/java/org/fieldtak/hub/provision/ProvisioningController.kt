@@ -14,6 +14,7 @@ import android.provider.Settings
 import androidx.core.content.FileProvider
 import org.fieldtak.hub.R
 import org.fieldtak.hub.model.*
+import org.fieldtak.hub.security.UrlPolicy
 import org.fieldtak.hub.util.VersionUtil
 import java.io.File
 
@@ -58,7 +59,14 @@ class ProvisioningController(private val context:Context) {
   fun pendingPlugins(root:File)=pluginStatuses(root).filter { it.state==PluginInstallState.NOT_INSTALLED || it.state==PluginInstallState.UPDATE_REQUIRED }
 
   fun canInstallPackages() = if(Build.VERSION.SDK_INT>=26) pm.canRequestPackageInstalls() else true
-  fun openUnknownSourcesSettings(){ if(Build.VERSION.SDK_INT>=26) context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,Uri.parse("package:${context.packageName}")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+
+  /** Opens the exact per-app Android setting required by REQUEST_INSTALL_PACKAGES. */
+  fun openUnknownSourcesSettings(){
+    if(Build.VERSION.SDK_INT>=26) {
+      context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,Uri.parse("package:${context.packageName}"))
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+  }
 
   fun installApk(file:File){
     val uri=FileProvider.getUriForFile(context,"${context.packageName}.files",file)
@@ -71,6 +79,49 @@ class ProvisioningController(private val context:Context) {
     val base=Intent(Intent.ACTION_VIEW).setDataAndType(uri,"application/zip").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
     try { context.startActivity(Intent(base).setPackage(atakPackage)) }
     catch(_:ActivityNotFoundException) { context.startActivity(Intent.createChooser(base,"Import ATAK Mission Package").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+  }
+
+  /**
+   * Opens only the ATAK QR URI families needed by Field TAK Hub:
+   *   tak://com.atakmap.app/enroll?...  - certificate enrollment
+   *   tak://com.atakmap.app/import?url=... - data/mission package import
+   *
+   * Enrollment tokens are never persisted or logged by Field TAK Hub.
+   */
+  fun openTakUri(raw:String):Boolean {
+    val uri=Uri.parse(raw.trim())
+    require(uri.scheme.equals("tak",true)) { s(R.string.vm_unsupported_qr) }
+    require(uri.host.equals("com.atakmap.app",true)) { s(R.string.vm_unsupported_tak_uri) }
+    val action=uri.pathSegments.firstOrNull()?.lowercase()
+    require(action=="enroll" || action=="import") { s(R.string.vm_unsupported_tak_uri) }
+
+    when(action) {
+      "enroll" -> {
+        // Validate the shape without retaining or logging the secret token.
+        require(!uri.getQueryParameter("host").isNullOrBlank()) { s(R.string.vm_enrollment_missing_fields) }
+        require(!uri.getQueryParameter("username").isNullOrBlank()) { s(R.string.vm_enrollment_missing_fields) }
+        require(!uri.getQueryParameter("token").isNullOrBlank()) { s(R.string.vm_enrollment_missing_fields) }
+      }
+      "import" -> {
+        val url=uri.getQueryParameter("url")
+        require(!url.isNullOrBlank()) { s(R.string.vm_data_package_missing_url) }
+        UrlPolicy.requireProvisioningUrl(url)
+      }
+    }
+
+    if(!detectAtak().installed) return false
+    return try {
+      context.startActivity(Intent(Intent.ACTION_VIEW,uri).setPackage(atakPackage).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+      true
+    } catch(_:ActivityNotFoundException) { false }
+  }
+
+  /** Convert a direct HTTPS/private-LAN data package URL into ATAK's native import URI. */
+  fun openTakImportUrl(rawUrl:String):Boolean {
+    val safe=UrlPolicy.requireProvisioningUrl(rawUrl)
+    val takUri=Uri.Builder().scheme("tak").authority("com.atakmap.app").appendPath("import")
+      .appendQueryParameter("url",safe).build().toString()
+    return openTakUri(takUri)
   }
 
   fun openAtak():Boolean = try {

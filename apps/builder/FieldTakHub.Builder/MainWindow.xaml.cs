@@ -22,8 +22,11 @@ public partial class MainWindow : Window
     private readonly UpdateService _updates = new();
     private readonly WorkspaceService _workspace = new();
     private readonly LegacyPackageImporter _legacy = new();
+    private readonly CloudDistributionService _cloud = new();
     private IReadOnlyList<ContentItem> _items = Array.Empty<ContentItem>();
     private string? _lastPackage;
+    private byte[]? _lastQrPng;
+    private string? _lastQrDeepLink;
     private bool _languageReady;
     private string? _currentProjectPath;
 
@@ -95,6 +98,7 @@ public partial class MainWindow : Window
             var caption = LocalizationService.Text("BuildPreviewTitle","Build preview");
             if(MessageBox.Show(preview+"\n\n"+LocalizationService.Text("BuildPreviewConfirm","Build this package?"),caption,MessageBoxButton.YesNo,MessageBoxImage.Question)!=MessageBoxResult.Yes) return;
             _lastPackage=_builder.Build(project,_items);
+            CloudPackageBox.Text=_lastPackage;
             var serverTxt=ServerTextConfigService.SidecarPath(_lastPackage);
             Log(string.Format(T("LogBuilt","Built and signed:\r\n{0}\r\n\r\nserver.txt:\r\n{1}\r\n\r\nATAK server.pref is generated inside the Mission Package unless source/atak contains a custom .pref."),_lastPackage,serverTxt));
         }
@@ -125,12 +129,70 @@ public partial class MainWindow : Window
             if(string.IsNullOrWhiteSpace(_lastPackage) || !File.Exists(_lastPackage)) { MessageBox.Show(T("BuildFirst","Build a package first."),T("WindowTitle","Field TAK Hub Builder")); return; }
             var project=FromUi(); ServerValidator.Validate(project.Server);
             var url=_server.Start(_lastPackage, TimeSpan.FromHours(project.ExpiryHours), project.MaxDownloads); UrlText.Text=url;
-            var deepLink=$"fieldtak://provision?url={Uri.EscapeDataString(url)}"; var png=_qr.CreatePng(deepLink); using var ms=new MemoryStream(png); var bi=new BitmapImage(); bi.BeginInit(); bi.CacheOption=BitmapCacheOption.OnLoad; bi.StreamSource=ms; bi.EndInit(); QrImage.Source=bi;
+            var deepLink=$"fieldtak://provision?url={Uri.EscapeDataString(url)}";
+            ShowQr(deepLink,_qr.CreatePng(deepLink));
             Log(string.Format(T("LogLanStarted","LAN distribution started. HTTP Range/206 resume is enabled. Plain HTTP is intended only for private LAN; Hub rejects public cleartext URLs.\r\nDescriptor: {0}\r\nQR deep-link: {1}"),url,deepLink));
         }
         catch(Exception ex){ Error(ex); }
     }
-    private void StopServer_Click(object sender, RoutedEventArgs e){ _server.Stop(); UrlText.Text=""; QrImage.Source=null; Log(T("LogDistributionStopped","Distribution stopped.")); }
+    private void StopServer_Click(object sender, RoutedEventArgs e){ _server.Stop(); UrlText.Text=""; QrImage.Source=null; _lastQrPng=null; _lastQrDeepLink=null; Log(T("LogDistributionStopped","Distribution stopped.")); }
+
+    private void SelectCloudPackage_Click(object sender, RoutedEventArgs e)
+    {
+        var d=new OpenFileDialog{Filter="Field TAK package (*.ftak)|*.ftak|All files (*.*)|*.*",InitialDirectory=Directory.Exists(OutputBox.Text)?OutputBox.Text:string.Empty};
+        if(d.ShowDialog()==true){CloudPackageBox.Text=d.FileName;_lastPackage=d.FileName;CloudStatusText.Text=T("CloudPackageSelected","Selected local package for cloud QR.");}
+    }
+
+    private async void TestCloudLink_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            CloudStatusText.Text=T("CloudTesting","Testing external HTTPS link…");
+            var result=await _cloud.TestAsync(CloudUrlBox.Text);
+            CloudStatusText.Text=(result.Success?"OK: ":"FAIL: ")+result.Detail;
+            Log(string.Format(T("LogCloudTest","CLOUD LINK TEST\r\n{0}"),CloudStatusText.Text));
+        }
+        catch(Exception ex){CloudStatusText.Text="FAIL: "+ex.Message;Error(ex);}
+    }
+
+    private void GenerateCloudQr_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var local=CloudPackageBox.Text.Trim();
+            if(string.IsNullOrWhiteSpace(local) || !File.Exists(local)){MessageBox.Show(T("SelectCloudPackageFirst","Select the exact local .ftak file that you uploaded to the cloud."),T("WindowTitle","Field TAK Hub Builder"));return;}
+            var project=FromUi();
+            var deepLink=CloudDistributionService.CreateDeepLink(CloudUrlBox.Text,local,DateTimeOffset.UtcNow.AddHours(project.ExpiryHours),project.Name);
+            var png=_qr.CreatePng(deepLink); ShowQr(deepLink,png);
+            Directory.CreateDirectory(project.OutputDirectory);
+            var stem=Path.GetFileNameWithoutExtension(local);
+            var qrPath=Path.Combine(project.OutputDirectory,stem+"-cloud-QR.png");
+            var txtPath=Path.Combine(project.OutputDirectory,stem+"-cloud-QR.txt");
+            File.WriteAllBytes(qrPath,png); File.WriteAllText(txtPath,deepLink);
+            CloudStatusText.Text=string.Format(T("CloudQrReady","Cloud QR ready. Saved: {0}"),qrPath);
+            Log(string.Format(T("LogCloudQr","Generated direct-cloud QR. SHA-256 is bound to the local .ftak.\r\nPackage: {0}\r\nCloud URL: {1}\r\nQR: {2}"),local,CloudUrlBox.Text.Trim(),qrPath));
+        }
+        catch(Exception ex){Error(ex);}
+    }
+
+    private void CopyCloudDeepLink_Click(object sender, RoutedEventArgs e)
+    {
+        if(string.IsNullOrWhiteSpace(_lastQrDeepLink)){MessageBox.Show(T("GenerateQrFirst","Generate a QR first."),T("WindowTitle","Field TAK Hub Builder"));return;}
+        Clipboard.SetText(_lastQrDeepLink); CloudStatusText.Text=T("DeepLinkCopied","Provisioning deep-link copied to clipboard.");
+    }
+
+    private void SaveQr_Click(object sender, RoutedEventArgs e)
+    {
+        if(_lastQrPng==null){MessageBox.Show(T("GenerateQrFirst","Generate a QR first."),T("WindowTitle","Field TAK Hub Builder"));return;}
+        var d=new SaveFileDialog{Filter="PNG image (*.png)|*.png",FileName="FieldTAK-provision-QR.png",InitialDirectory=Directory.Exists(OutputBox.Text)?OutputBox.Text:string.Empty};
+        if(d.ShowDialog()==true){File.WriteAllBytes(d.FileName,_lastQrPng);Log(string.Format(T("LogQrSaved","Saved QR PNG: {0}"),d.FileName));}
+    }
+
+    private void ShowQr(string deepLink,byte[] png)
+    {
+        _lastQrDeepLink=deepLink; _lastQrPng=png;
+        using var ms=new MemoryStream(png); var bi=new BitmapImage(); bi.BeginInit(); bi.CacheOption=BitmapCacheOption.OnLoad; bi.StreamSource=ms; bi.EndInit(); bi.Freeze(); QrImage.Source=bi;
+    }
 
     private void SaveProject_Click(object sender, RoutedEventArgs e)
     {
@@ -346,7 +408,7 @@ public partial class MainWindow : Window
         {
             var update=await _updates.CheckAsync();
             if(update==null){if(!silent)Log(T("NoBuilderUpdate","No newer Builder release on the configured channel."));return;}
-            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc4",update.Version));
+            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc5",update.Version));
             if(silent)return;
             if(MessageBox.Show(string.Format(T("BuilderUpdatePrompt","Builder {0} is available. Download the verified ZIP now?"),update.Version),T("UpdateTitle","Field TAK Hub Update"),MessageBoxButton.YesNo,MessageBoxImage.Information)!=MessageBoxResult.Yes)return;
             var path=await _updates.DownloadAsync(update); Log(string.Format(T("UpdateDownloaded","Update downloaded and SHA-256 verified: {0}"),path)); UpdateService.ShowInExplorer(path);
@@ -365,5 +427,5 @@ public partial class MainWindow : Window
     private void Error(Exception ex){ Log(T("ErrorPrefix","ERROR")+": "+ex.Message); MessageBox.Show(ex.Message,T("WindowTitle","Field TAK Hub"),MessageBoxButton.OK,MessageBoxImage.Error); }
     private static string HumanBytes(long bytes)=>bytes>=1024L*1024*1024?$"{bytes/1024d/1024d/1024d:F2} GB":bytes>=1024L*1024?$"{bytes/1024d/1024d:F1} MB":$"{bytes} B";
     private static string ShortFingerprint(string fp)=>fp.Length<=24?fp:$"{fp[..12]}…{fp[^12..]}";
-    protected override void OnClosed(EventArgs e){ _server.Dispose(); base.OnClosed(e); }
+    protected override void OnClosed(EventArgs e){ _server.Dispose(); _cloud.Dispose(); base.OnClosed(e); }
 }

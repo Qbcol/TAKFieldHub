@@ -62,7 +62,11 @@ class MainActivity:AppCompatActivity(){
   override fun onNewIntent(intent:Intent){super.onNewIntent(intent);setIntent(intent);handleIntent(intent)}
   override fun onResume(){super.onResume();vm.onExternalReturn()}
   override fun onDestroy(){runCatching{unregisterReceiver(packageReceiver)};super.onDestroy()}
-  private fun handleIntent(intent:Intent?){intent?.data?.let{if(it.scheme=="fieldtak") vm.fromDescriptor(it.toString())}}
+  private fun handleIntent(intent:Intent?){
+    intent?.data?.let { data ->
+      if(intent.action==Intent.ACTION_VIEW) vm.handleInput(data.toString())
+    }
+  }
 }
 
 enum class AppScreen { HOME, SCAN, DETAILS, SERVICE, HISTORY, SETTINGS }
@@ -87,8 +91,8 @@ fun FieldTakApp(vm:MainViewModel,activity:MainActivity){
   )}){pad->
     Box(Modifier.padding(pad).fillMaxSize()){
       when(screen){
-        AppScreen.HOME->HomeScreen(state,vm,onScan={push(AppScreen.SCAN)},onImport={picker.launch(arrayOf("application/zip","application/octet-stream","application/vnd.fieldtak.package"))},url=url,onUrl={url=it},onOpenUrl={vm.fromDescriptor(url)},onDetails={push(AppScreen.DETAILS)},onService={push(AppScreen.SERVICE)},onHistory={push(AppScreen.HISTORY)})
-        AppScreen.SCAN->Box(Modifier.fillMaxSize()){QrScanner{v->back();vm.fromDescriptor(v)};FilledTonalButton(onClick={back()},modifier=Modifier.align(Alignment.BottomCenter).padding(24.dp).heightIn(min=48.dp)){Text(stringResource(R.string.cancel))}}
+        AppScreen.HOME->HomeScreen(state,vm,onScan={push(AppScreen.SCAN)},onImport={picker.launch(arrayOf("application/zip","application/octet-stream","application/vnd.fieldtak.package"))},url=url,onUrl={url=it},onOpenUrl={vm.handleInput(url)},onDetails={push(AppScreen.DETAILS)},onService={push(AppScreen.SERVICE)},onHistory={push(AppScreen.HISTORY)})
+        AppScreen.SCAN->Box(Modifier.fillMaxSize()){QrScanner{v->back();vm.handleInput(v)};FilledTonalButton(onClick={back()},modifier=Modifier.align(Alignment.BottomCenter).padding(24.dp).heightIn(min=48.dp)){Text(stringResource(R.string.cancel))}}
         AppScreen.DETAILS->DetailsScreen(state,vm)
         AppScreen.SERVICE->ServiceScreen(state,vm,activity)
         AppScreen.HISTORY->HistoryScreen(state,vm)

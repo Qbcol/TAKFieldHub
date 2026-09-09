@@ -27,7 +27,7 @@ public sealed class UpdateService
         }
         _repository = repo; _channel = channel;
         _http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(30) };
-        _http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("FieldTAKHubBuilder", "2.1.0-rc4"));
+        _http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("FieldTAKHubBuilder", "2.1.0-rc5"));
         _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
     }
 
@@ -53,7 +53,7 @@ public sealed class UpdateService
         if (!string.Equals(manifest.RootElement.GetProperty("channel").GetString(), _channel, StringComparison.OrdinalIgnoreCase)) return null;
         var builder = manifest.RootElement.GetProperty("builder");
         var version = builder.GetProperty("version").GetString() ?? "";
-        if (CompareVersions(version, "2.1.0-rc4") <= 0) return null;
+        if (CompareVersions(version, "2.1.0-rc5") <= 0) return null;
         var assetName = builder.GetProperty("asset").GetString() ?? "";
         var sha = builder.GetProperty("sha256").GetString()?.ToLowerInvariant() ?? "";
         var match = assets.FirstOrDefault(a => a.GetProperty("name").GetString() == assetName);

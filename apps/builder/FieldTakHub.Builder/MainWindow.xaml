@@ -110,15 +110,40 @@
         </ListView>
       </GroupBox>
 
-      <WrapPanel Grid.Row="1" Margin="0,10">
-        <Button Content="{DynamicResource StartLan}" Click="StartServer_Click"/>
-        <Button Content="{DynamicResource Stop}" Click="StopServer_Click"/>
-        <TextBlock x:Name="UrlText" Margin="12,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
-      </WrapPanel>
+      <StackPanel Grid.Row="1" Margin="0,10,0,8">
+        <GroupBox Header="{DynamicResource DistributionLan}">
+          <WrapPanel Margin="6">
+            <Button Content="{DynamicResource StartLan}" Click="StartServer_Click"/>
+            <Button Content="{DynamicResource Stop}" Click="StopServer_Click"/>
+            <TextBlock x:Name="UrlText" Margin="12,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+          </WrapPanel>
+        </GroupBox>
+        <GroupBox Header="{DynamicResource CloudDistribution}" Margin="0,8,0,0">
+          <StackPanel Margin="8">
+            <TextBlock Text="{DynamicResource CloudHelp}" TextWrapping="Wrap" Foreground="Gray" Margin="0,0,0,6"/>
+            <TextBlock Text="{DynamicResource LocalPackage}"/>
+            <DockPanel>
+              <Button DockPanel.Dock="Right" Content="{DynamicResource SelectFtak}" Click="SelectCloudPackage_Click"/>
+              <TextBox x:Name="CloudPackageBox" IsReadOnly="True" AutomationProperties.Name="{DynamicResource LocalPackage}"/>
+            </DockPanel>
+            <TextBlock Text="{DynamicResource ExternalPackageUrl}" Margin="0,5,0,0"/>
+            <TextBox x:Name="CloudUrlBox" AutomationProperties.Name="{DynamicResource ExternalPackageUrl}"/>
+            <WrapPanel Margin="0,7,0,0">
+              <Button Content="{DynamicResource TestCloudLink}" Click="TestCloudLink_Click"/>
+              <Button Content="{DynamicResource GenerateCloudQr}" Click="GenerateCloudQr_Click" FontWeight="SemiBold"/>
+              <Button Content="{DynamicResource CopyDeepLink}" Click="CopyCloudDeepLink_Click"/>
+            </WrapPanel>
+            <TextBlock x:Name="CloudStatusText" TextWrapping="Wrap" Foreground="Gray" Margin="2,4,2,0"/>
+          </StackPanel>
+        </GroupBox>
+      </StackPanel>
 
       <Grid Grid.Row="2">
         <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-        <Border BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,0,12,0"><Image x:Name="QrImage" Stretch="Uniform" AutomationProperties.Name="Provisioning QR code"/></Border>
+        <StackPanel Margin="0,0,12,0">
+          <Border BorderBrush="#DDD" BorderThickness="1" Padding="8"><Image x:Name="QrImage" Height="250" Stretch="Uniform" AutomationProperties.Name="Provisioning QR code"/></Border>
+          <Button Content="{DynamicResource SaveQrPng}" Click="SaveQr_Click" Margin="0,6,0,0"/>
+        </StackPanel>
         <GroupBox Grid.Column="1" Header="{DynamicResource StatusDetails}"><TextBox x:Name="StatusBox" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource StatusDetails}"/></GroupBox>
       </Grid>
     </Grid>

@@ -1,6 +1,6 @@
 <resources>
   <string name="app_name">Field TAK Hub</string>
-  <string name="app_title">Field TAK Hub 2.0.1 RC2</string>
+  <string name="app_title">Field TAK Hub 2.0.1 RC3</string>
   <string name="brand_version">Version %1$s</string>
   <string name="back">Back</string>
   <string name="cancel">Cancel</string>
@@ -10,10 +10,10 @@
   <string name="language_polish">Polish</string>
   <string name="language_english">English</string>
   <string name="prepare_title">Prepare this phone for ATAK</string>
-  <string name="prepare_subtitle">Scan a provisioning QR code or import a signed .ftak package.</string>
+  <string name="prepare_subtitle">Scan a provisioning, enrollment or data-package QR, or import a signed .ftak package.</string>
   <string name="scan_qr">SCAN QR</string>
   <string name="import_ftak">IMPORT .FTAK</string>
-  <string name="descriptor_url">Descriptor URL</string>
+  <string name="descriptor_url">Link / descriptor / .ftak</string>
   <string name="open_link">OPEN LINK</string>
   <string name="history_count">DEPLOYMENT HISTORY (%1$d)</string>
   <string name="package_line">Package %1$s • %2$s</string>
@@ -165,4 +165,12 @@
 
   <string name="camera_permission_required">Camera permission is required to scan QR codes.</string>
   <string name="atak_connection">ATAK connection</string>
+
+  <string name="vm_cloud_link_valid">Cloud package link accepted</string>
+  <string name="vm_empty_qr">The scanned value is empty.</string>
+  <string name="vm_unsupported_qr">Unsupported QR code or link.</string>
+  <string name="vm_unsupported_tak_uri">This TAK URI is not an ATAK enrollment or import QR supported by Field TAK Hub.</string>
+  <string name="vm_enrollment_missing_fields">Enrollment QR is missing host, username or token.</string>
+  <string name="vm_data_package_missing_url">ATAK data package QR does not contain a download URL.</string>
+  <string name="vm_atak_required_for_qr">ATAK CIV must be installed before enrollment or data-package import can be handed off.</string>
 </resources>
