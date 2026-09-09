@@ -42,3 +42,8 @@
 
 - update redirects are revalidated as HTTPS
 - public cleartext provisioning is rejected while private LAN Builder HTTP remains supported
+
+### RC1 CI Hotfix 3
+
+- Fixed remaining Windows Builder compilation blockers caused by missing explicit `System.IO` imports across project, mission package, source analysis, publisher-key, server-text and validation services.
+- Source Gate now scans all Builder C# files for System.IO symbols and rejects missing imports before GitHub Actions reaches `dotnet test`.

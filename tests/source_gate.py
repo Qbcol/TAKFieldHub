@@ -72,10 +72,13 @@ if re.search(r'onClick\s*=\s*\{\s*back\s*\}', main_activity):
     fail('Android onClick contains bare local back function instead of invoking/passing it')
 if re.search(r'progress\s*=\s*0\s+to\s+null', vm):
     fail('Android progress pair uses Int zero; expected Long')
-for rel in ('apps/builder/FieldTakHub.Builder/Services/FtakPackageBuilder.cs','apps/builder/FieldTakHub.Builder/Services/UpdateService.cs'):
-    txt=read(rel)
-    if 'using System.IO;' not in txt:
-        fail(f'Builder compile contract missing explicit System.IO in {rel}')
+# WPF/.NET implicit-usings differ from plain SDK projects. Any Builder source file that
+# uses System.IO types must import System.IO explicitly so CI and local WPF builds agree.
+io_symbols = re.compile(r'\b(?:Path|File|Directory|FileInfo|DirectoryInfo|InvalidDataException|DirectoryNotFoundException|FileNotFoundException|StreamWriter|MemoryStream|SearchOption|FileStream|Stream)\b')
+for cp in (ROOT/'apps/builder/FieldTakHub.Builder').rglob('*.cs'):
+    txt=cp.read_text(encoding='utf-8')
+    if io_symbols.search(txt) and 'using System.IO;' not in txt and 'global using System.IO;' not in txt:
+        fail(f'Builder compile contract missing explicit System.IO in {cp.relative_to(ROOT)}')
 if 'Uri.EscapeUriString(' in dist:
     fail('Builder uses obsolete Uri.EscapeUriString')
 builder_tests=read('apps/builder/FieldTakHub.Builder.Tests/BuilderCoreTests.cs')

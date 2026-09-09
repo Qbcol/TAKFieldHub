@@ -51,3 +51,7 @@ Two defects were found and fixed during RC validation: prerelease update discove
 ## GitHub Actions RC1 CI Hotfix 2
 
 The second browser-driven CI run progressed further and exposed compile-time issues in Android UI wiring and two Builder source files. RC1 now includes fixes for the Compose `setContent` import, the SCAN back callback, the `Long` download progress pair, explicit Builder `System.IO` imports, and Builder test imports. The obsolete LAN URL escaping warning was also removed. A new GitHub Actions run is required to validate the next compile stage.
+
+## RC1 CI Hotfix 3
+
+Real GitHub Actions exposed additional Windows Builder compile errors after Hotfix 2. All remaining Builder files using `Path`, `File`, `Directory`, IO exceptions or stream types now import `System.IO` explicitly. The source gate has been generalized to prevent the same class of error from recurring.

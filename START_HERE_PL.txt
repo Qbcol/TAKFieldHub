@@ -1,26 +1,7 @@
-CI HOTFIX 2 — NAJPROSTSZA AKTUALIZACJA ISTNIEJĄCEGO REPO PRZEZ PRZEGLĄDARKĘ
+FIELD TAK HUB 2.0.1-RC1 / BUILDER 2.1.0-RC1 — CI HOTFIX 3
 
-Podmień pliki z tej paczki w tych samych ścieżkach repozytorium GitHub.
-Najważniejsze pliki dla builda:
+Ta paczka zawiera tylko pliki do podmiany po błędzie Windows Buildera wykrytym przez GitHub Actions.
 
-Android:
-- apps/android/app/src/main/java/org/fieldtak/hub/MainActivity.kt
-- apps/android/app/src/main/java/org/fieldtak/hub/MainViewModel.kt
+Najważniejsza zmiana: wszystkie usługi Buildera używające Path/File/Directory/Stream jawnie importują System.IO. Source Gate sprawdza teraz cały projekt i zablokuje podobny błąd przed dotnet test.
 
-Windows Builder:
-- apps/builder/FieldTakHub.Builder/Services/FtakPackageBuilder.cs
-- apps/builder/FieldTakHub.Builder/Services/UpdateService.cs
-- apps/builder/FieldTakHub.Builder/Services/DistributionServer.cs
-- apps/builder/FieldTakHub.Builder.Tests/BuilderCoreTests.cs
-
-Gate:
-- tests/source_gate.py
-
-Pozostałe pliki to dokumentacja zmian.
-
-Po commicie uruchom:
-Actions -> Source Gate -> Run workflow
-Actions -> Android -> Run workflow
-Actions -> Windows Builder -> Run workflow
-
-Nie uruchamiaj jeszcze Release.
+W GitHubie podmień pliki zachowując dokładnie ich ścieżki, wykonaj commit do main, następnie Actions -> Source Gate -> Run workflow oraz Windows Builder -> Run workflow. Androida nie trzeba zmieniać w Hotfix 3.

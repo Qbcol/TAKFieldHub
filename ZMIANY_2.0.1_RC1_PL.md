@@ -32,3 +32,8 @@ Drugi rzeczywisty build GitHub Actions ujawnił kolejne błędy kompilacji. Popr
 - przestarzałe `Uri.EscapeUriString` w serwerze LAN.
 
 Source Gate został rozszerzony o kontrole tych regresji.
+
+## CI Hotfix 3
+
+- Naprawiono pozostałe błędy kompilacji Windows Buildera związane z brakującym `System.IO` w `ProjectService`, `MissionPackageBuilder`, `SourceAnalyzer`, `SigningKeyService`, `ServerTextConfigService` i `ServerValidator`.
+- Source Gate kontroluje teraz cały kod Buildera pod kątem użycia `Path/File/Directory/Stream*` bez wymaganej przestrzeni nazw.
