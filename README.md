@@ -4,10 +4,10 @@
 
 This repository contains:
 
-- **Field TAK Hub 2.0.1 RC1 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
-- **Field TAK Hub Builder 2.1.0 RC1 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
+- **Field TAK Hub 2.0.1 RC2 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
+- **Field TAK Hub Builder 2.1.0 RC3 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
 
-> Status: **Release Candidate 1**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
+> Status: **Release Candidate 2 (Android) / Release Candidate 3 (Builder)**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
 
 ## Key features
 
@@ -30,6 +30,9 @@ This repository contains:
 - **GitHub Releases update checker** with release-channel filtering, HTTPS-only update transport and SHA-256 verification before Android installer hand-off
 
 ### Windows Builder
+
+Builder 2.1.0 RC3 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC3_FROM_SCRATCH_EN.md`.
+
 
 - portable `.fthproj` projects with relative source/output paths
 - editable TAK server fields in the GUI
@@ -118,7 +121,7 @@ The gate verifies version consistency, PL/EN resource parity, JSON/XML/XAML synt
 - web: `8443`
 - ATAK target: `5.6` through `5.8`
 
-These are **example/default values only**. In Builder 2.1.0 RC1 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
+These are **example/default values only**. In Builder 2.1.0 RC3 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
 
 ## Typical field workflow
 
@@ -185,7 +188,7 @@ Read [`SECURITY.md`](SECURITY.md) and [`docs/SECURITY_MODEL.md`](docs/SECURITY_M
 - [`docs/FTAK_FORMAT.md`](docs/FTAK_FORMAT.md) — package format
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — architecture overview
 - [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) — RC → Stable checklist
-- [`docs/RC1_VALIDATION.md`](docs/RC1_VALIDATION.md) — checks performed and remaining release gates
+- [`docs/RC2_VALIDATION.md`](docs/RC2_VALIDATION.md) — checks performed and remaining release gates
 
 ## Release policy
 

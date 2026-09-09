@@ -1,6 +1,26 @@
 # Changelog
 
-## Field TAK Hub 2.0.1 RC1 / Builder 2.1.0 RC1 — 2026-09-09
+## 2.0.1 RC2 / Builder 2.1.0 RC3 — 2026-09-09
+
+- restored the TAK Field Hub 1.9 launcher/application icon,
+- restored the 1.9 dark/cyan visual palette on Android and Windows Builder,
+- added branded `PROVISION • DEPLOY • READY` headers,
+- emphasized primary provisioning/build actions while preserving accessibility,
+- kept `.ftak` schema v2 and provisioning QR contracts unchanged.
+
+## Builder 2.1.0 RC3 — 2026-09-09
+
+- automatic workspace creation on startup,
+- New Project wizard,
+- automatic creation/repair of source/atak, plugins, maps, overlays, config, data and out,
+- per-folder Open controls and file counts,
+- drag-and-drop into project folders with collision-safe filenames,
+- bilingual source-folder README,
+- tests and source-gate coverage for workspace automation.
+
+# Changelog
+
+## Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC1 — 2026-09-09
 
 ### Added
 

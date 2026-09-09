@@ -1,4 +1,4 @@
-# Field TAK Hub 2.0.1 RC1 / Builder 2.1.0 RC1 — Project Status
+# Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC3 — Project Status
 
 ## Implemented in RC1
 
@@ -27,7 +27,7 @@
 
 This generation environment has Java/Kotlin and Python, but does not contain a complete Android SDK/Gradle toolchain or Windows .NET/WPF SDK. Therefore Android `assembleRelease` and WPF `dotnet publish` must be validated by GitHub Actions or local supported machines.
 
-The repository is intentionally marked **RC1** until those builds and the real-device checklist pass.
+The repository is intentionally kept in the **RC channel** until the refreshed Android/Builder builds and the real-device checklist pass.
 
 
 ## GitHub Actions RC1 hotfix
@@ -55,3 +55,15 @@ The second browser-driven CI run progressed further and exposed compile-time iss
 ## RC1 CI Hotfix 3
 
 Real GitHub Actions exposed additional Windows Builder compile errors after Hotfix 2. All remaining Builder files using `Path`, `File`, `Directory`, IO exceptions or stream types now import `System.IO` explicitly. The source gate has been generalized to prevent the same class of error from recurring.
+
+
+## Builder RC2 workspace UX
+
+Builder now creates and repairs the complete project folder tree automatically, provides a New Project wizard, per-folder open/count controls and drag-and-drop. Existing project files are preserved.
+
+
+## 1.9 visual identity refresh
+
+Field TAK Hub 2.0.1 RC2 and Builder 2.1.0 RC3 restore the recognizable 1.9 visual identity: the original launcher/Builder icon, dark slate background, cyan accent, green success and red problem/stop states. Primary actions are now more prominent while accessibility semantics and textual status labels remain intact. Package format, cryptographic verification and provisioning QR contracts are unchanged.
+
+The earlier RC1 code path reached green GitHub Actions for Android, Windows Builder and Source Gate. Because this visual refresh changes Android Compose resources and WPF/XAML, the three workflows must be rerun for this exact RC2/RC3 commit before it is promoted further.

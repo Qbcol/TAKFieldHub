@@ -81,10 +81,26 @@ for cp in (ROOT/'apps/builder/FieldTakHub.Builder').rglob('*.cs'):
         fail(f'Builder compile contract missing explicit System.IO in {cp.relative_to(ROOT)}')
 if 'Uri.EscapeUriString(' in dist:
     fail('Builder uses obsolete Uri.EscapeUriString')
+workspace=read('apps/builder/FieldTakHub.Builder/Services/WorkspaceService.cs')
+for token in ('SourceFolders', 'EnsureDefaultProject', 'EnsureSourceTree', 'CreateNewProject', 'README-WRZUC-PLIKI-TUTAJ.txt'):
+    if token not in workspace: fail(f'Builder workspace automation missing {token}')
+main_xaml=read('apps/builder/FieldTakHub.Builder/MainWindow.xaml')
+for token in ('NewProject_Click', 'ProjectFolder_Drop', 'RepairFolders_Click'):
+    if token not in main_xaml: fail(f'Builder project-folder UI missing {token}')
 builder_tests=read('apps/builder/FieldTakHub.Builder.Tests/BuilderCoreTests.cs')
 for required_using in ('using System;','using System.IO;','using System.Linq;'):
     if required_using not in builder_tests:
         fail(f'Builder tests compile contract missing {required_using}')
+
+# Visual identity contract: retain the proven 1.9 launcher assets and brand palette.
+brand_theme=read('apps/android/app/src/main/java/org/fieldtak/hub/ui/FieldTakTheme.kt')
+for token in ('0xFF0B1114','0xFF102127','0xFF28E0D7','0xFFFF3B4E','0xFF59D17D'):
+    if token not in brand_theme: fail(f'Android 1.9 brand palette missing {token}')
+manifest_text=read('apps/android/app/src/main/AndroidManifest.xml')
+for token in ('android:icon="@mipmap/ic_launcher"','android:roundIcon="@mipmap/ic_launcher_round"'):
+    if token not in manifest_text: fail(f'Android launcher icon contract missing {token}')
+for asset in ('apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml','apps/builder/FieldTakHub.Builder/Assets/tak-field-hub-icon-1.9.png','apps/builder/FieldTakHub.Builder/Assets/tak-field-hub-builder.ico'):
+    if not (ROOT/asset).exists(): fail(f'Missing 1.9 visual asset: {asset}')
 
 # Parse source JSON/XML/XAML.
 for p in ROOT.rglob('*.json'):

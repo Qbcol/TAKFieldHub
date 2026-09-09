@@ -10,8 +10,8 @@ try {
 $out="$root\artifacts\android"
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 if($Release) {
-  Copy-Item "$root\apps\android\app\build\outputs\apk\release\app-release.apk" "$out\FieldTAKHub-2.0.1-RC1.apk" -Force
+  Copy-Item "$root\apps\android\app\build\outputs\apk\release\app-release.apk" "$out\FieldTAKHub-2.0.1-RC2.apk" -Force
 } else {
-  Copy-Item "$root\apps\android\app\build\outputs\apk\debug\app-debug.apk" "$out\FieldTAKHub-2.0.1-RC1-debug.apk" -Force
+  Copy-Item "$root\apps\android\app\build\outputs\apk\debug\app-debug.apk" "$out\FieldTAKHub-2.0.1-RC2-debug.apk" -Force
 }
 Write-Host "Android APK: $out"

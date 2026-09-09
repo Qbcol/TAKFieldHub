@@ -1,4 +1,4 @@
-# Field TAK Hub 2.0.1 RC1 / Builder 2.1.0 RC1
+# Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC1
 
 Najważniejsze zmiany przed wydaniem Stable:
 
