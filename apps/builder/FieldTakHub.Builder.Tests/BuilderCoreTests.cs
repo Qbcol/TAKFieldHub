@@ -35,4 +35,32 @@ public class BuilderCoreTests
         using var zip=ZipFile.OpenRead(ftak);var names=zip.Entries.Select(x=>x.FullName).ToHashSet(StringComparer.OrdinalIgnoreCase);
         Assert.Contains("META-INF/fieldtak.json",names);Assert.Contains("META-INF/checksums.sha256",names);Assert.Contains("META-INF/signature.ed25519",names);Assert.Contains("payload/atak/mission-package.zip",names);
     }
+    [Fact]
+    public void WorkspaceCreatesAndRepairsProjectFolders()
+    {
+        var dir=Path.Combine(Path.GetTempPath(),"fth-workspace-"+Guid.NewGuid().ToString("N"));
+        var source=Path.Combine(dir,"source"); var output=Path.Combine(dir,"out"); var svc=new WorkspaceService();
+        svc.EnsureSourceTree(source,output);
+        foreach(var folder in WorkspaceService.SourceFolders) Assert.True(Directory.Exists(Path.Combine(source,folder)));
+        Assert.True(Directory.Exists(output)); Assert.True(File.Exists(Path.Combine(source,"README-WRZUC-PLIKI-TUTAJ.txt")));
+        Directory.Delete(Path.Combine(source,"maps")); svc.EnsureSourceTree(source,output);
+        Assert.True(Directory.Exists(Path.Combine(source,"maps")));
+    }
+
+    [Fact]
+    public void WorkspaceSlugIsFilesystemFriendly()
+    {
+        Assert.Equal("GGZS-STANDARD",WorkspaceService.Slug("GGZS STANDARD"));
+        Assert.Equal("Field-TAK-Package",WorkspaceService.Slug("   "));
+    }
+
+    [Fact]
+    public void SourceAnalyzerIgnoresWorkspaceHelpFile()
+    {
+        var dir=Path.Combine(Path.GetTempPath(),"fth-analyze-"+Guid.NewGuid().ToString("N")); var source=Path.Combine(dir,"source"); var output=Path.Combine(dir,"out");
+        new WorkspaceService().EnsureSourceTree(source,output); File.WriteAllText(Path.Combine(source,"plugins","plugin.apk"),"x");
+        var items=new SourceAnalyzer().Analyze(source);
+        Assert.Single(items); Assert.Equal("plugins/plugin.apk",items[0].RelativePath);
+    }
+
 }

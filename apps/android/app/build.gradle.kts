@@ -13,8 +13,8 @@ android {
     applicationId = "org.fieldtak.hub"
     minSdk = 26
     targetSdk = 37
-    versionCode = 20101
-    versionName = "2.0.1-rc1"
+    versionCode = 20102
+    versionName = "2.0.1-rc2"
     buildConfigField("String", "UPDATE_REPOSITORY", "\"Qbcol/field-tak-hub\"")
     buildConfigField("String", "RELEASE_CHANNEL", "\"rc\"")
   }

@@ -11,6 +11,8 @@
   <application
     android:allowBackup="false"
     android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
     android:localeConfig="@xml/locales_config"
     android:theme="@style/Theme.FieldTakHub"
     android:usesCleartextTraffic="true">

@@ -25,14 +25,14 @@ Each GitHub Release includes `fieldtak-release.json`:
   "version": 1,
   "channel": "rc",
   "hub": {
-    "version": "2.0.1-rc1",
+    "version": "2.0.1-rc2",
     "versionCode": 20101,
-    "asset": "FieldTAKHub-2.0.1-RC1.apk",
+    "asset": "FieldTAKHub-2.0.1-RC2.apk",
     "sha256": "..."
   },
   "builder": {
-    "version": "2.1.0-rc1",
-    "asset": "FieldTAKHub-Builder-2.1.0-RC1-win-x64.zip",
+    "version": "2.1.0-rc3",
+    "asset": "FieldTAKHub-Builder-2.1.0-RC3-win-x64.zip",
     "sha256": "..."
   }
 }

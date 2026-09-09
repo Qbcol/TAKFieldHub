@@ -1,4 +1,5 @@
 using System.IO;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -19,19 +20,28 @@ public partial class MainWindow : Window
     private readonly ServerDiagnosticsService _diagnostics = new();
     private readonly SigningKeyService _signing = new();
     private readonly UpdateService _updates = new();
+    private readonly WorkspaceService _workspace = new();
     private IReadOnlyList<ContentItem> _items = Array.Empty<ContentItem>();
     private string? _lastPackage;
     private bool _languageReady;
+    private string? _currentProjectPath;
 
     public MainWindow()
     {
         InitializeComponent();
         PublisherBox.Text = Environment.UserName;
-        SourceBox.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FieldTakHub", "source");
-        OutputBox.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FieldTakHub", "out");
+        var layout = _workspace.EnsureDefaultProject();
+        SourceBox.Text = layout.SourceDirectory;
+        OutputBox.Text = layout.OutputDirectory;
+        _currentProjectPath = File.Exists(layout.ProjectFile) ? layout.ProjectFile : null;
         FingerprintRun.Text = ShortFingerprint(_signing.Fingerprint());
         _languageReady = true;
-        Loaded += async (_, _) => await CheckUpdatesAsync(silent: true);
+        RefreshFolderCounts();
+        Loaded += async (_, _) =>
+        {
+            EnsureCurrentStructure(log: true);
+            await CheckUpdatesAsync(silent: true);
+        };
     }
 
     private FieldTakProject FromUi() => new()
@@ -63,13 +73,13 @@ public partial class MainWindow : Window
         ServerTypeBox.Text=s.Type; ServerNameBox.Text=s.Name; HostBox.Text=s.Host; CotBox.Text=s.CotPort.ToString(); ApiBox.Text=s.ApiPort.ToString(); WebBox.Text=s.WebPort.ToString();
     }
 
-    private void BrowseSource_Click(object sender, RoutedEventArgs e) { var p=Folder(SourceBox.Text); if(p!=null) SourceBox.Text=p; }
-    private void BrowseOutput_Click(object sender, RoutedEventArgs e) { var p=Folder(OutputBox.Text); if(p!=null) OutputBox.Text=p; }
+    private void BrowseSource_Click(object sender, RoutedEventArgs e) { var p=Folder(SourceBox.Text); if(p!=null){ SourceBox.Text=p; EnsureCurrentStructure(log:false); RefreshFolderCounts(); } }
+    private void BrowseOutput_Click(object sender, RoutedEventArgs e) { var p=Folder(OutputBox.Text); if(p!=null){ OutputBox.Text=p; EnsureCurrentStructure(log:false); } }
     private static string? Folder(string initial) { var d = new OpenFolderDialog { InitialDirectory = Directory.Exists(initial) ? initial : string.Empty, Multiselect = false }; return d.ShowDialog() == true ? d.FolderName : null; }
 
     private void Analyze_Click(object sender, RoutedEventArgs e)
     {
-        try { _items=_analyzer.Analyze(SourceBox.Text); ContentList.ItemsSource=_items; Log(string.Format(T("LogAnalyzed","Analyzed {0} files. ATAK source: {1}; APKs: {2}; total {3}."),_items.Count,_items.Count(x=>x.Category=="ATAK Mission Package"),_items.Count(x=>x.Category=="Plugin APK"),HumanBytes(_items.Sum(x=>x.Size)))); }
+        try { EnsureCurrentStructure(log:false); _items=_analyzer.Analyze(SourceBox.Text); ContentList.ItemsSource=_items; Log(string.Format(T("LogAnalyzed","Analyzed {0} files. ATAK source: {1}; APKs: {2}; total {3}."),_items.Count,_items.Count(x=>x.Category=="ATAK Mission Package"),_items.Count(x=>x.Category=="Plugin APK"),HumanBytes(_items.Sum(x=>x.Size)))); }
         catch(Exception ex){ Error(ex); }
     }
 
@@ -77,6 +87,7 @@ public partial class MainWindow : Window
     {
         try
         {
+            EnsureCurrentStructure(log:false);
             var project=FromUi(); ServerValidator.ValidateProject(project);
             if(_items.Count==0) _items=_analyzer.Analyze(project.SourceDirectory);
             var preview = BuildPreview(project,_items);
@@ -122,11 +133,145 @@ public partial class MainWindow : Window
 
     private void SaveProject_Click(object sender, RoutedEventArgs e)
     {
-        var d=new SaveFileDialog{Filter="Field TAK project (*.fthproj)|*.fthproj",FileName="FieldTAK.fthproj"}; if(d.ShowDialog()==true){ try{var p=FromUi();ServerValidator.Validate(p.Server);_projects.Save(d.FileName,p);Log(string.Format(T("LogSavedProject","Saved {0}"),d.FileName));}catch(Exception ex){Error(ex);} }
+        var initialName = WorkspaceService.Slug(NameBox.Text) + ".fthproj";
+        var d=new SaveFileDialog{Filter="Field TAK project (*.fthproj)|*.fthproj",FileName=initialName,InitialDirectory=CurrentProjectRoot()};
+        if(d.ShowDialog()==true)
+        {
+            try
+            {
+                var p=FromUi(); ServerValidator.Validate(p.Server); EnsureCurrentStructure(log:false); _projects.Save(d.FileName,p); _currentProjectPath=d.FileName;
+                Log(string.Format(T("LogSavedProject","Saved {0}"),d.FileName));
+            }
+            catch(Exception ex){Error(ex);}
+        }
     }
+
     private void LoadProject_Click(object sender, RoutedEventArgs e)
     {
-        var d=new OpenFileDialog{Filter="Field TAK project (*.fthproj)|*.fthproj"}; if(d.ShowDialog()==true){try{var p=_projects.Load(d.FileName);ToUi(p);Log(string.Format(T("LogLoadedProject","Loaded {0}"),d.FileName));}catch(Exception ex){Error(ex);} }
+        var d=new OpenFileDialog{Filter="Field TAK project (*.fthproj)|*.fthproj",InitialDirectory=_workspace.DefaultProjectsRoot};
+        if(d.ShowDialog()==true)
+        {
+            try
+            {
+                var p=_projects.Load(d.FileName); _workspace.EnsureSourceTree(p.SourceDirectory,p.OutputDirectory); ToUi(p); _currentProjectPath=d.FileName;
+                _items=Array.Empty<ContentItem>(); ContentList.ItemsSource=_items; RefreshFolderCounts();
+                Log(string.Format(T("LogLoadedProject","Loaded {0}"),d.FileName));
+                Log(T("LogFoldersRepaired","Project folders checked and missing folders created."));
+            }
+            catch(Exception ex){Error(ex);}
+        }
+    }
+
+    private void NewProject_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new NewProjectDialog { Owner=this };
+        if(dialog.ShowDialog()!=true) return;
+        try
+        {
+            var layout=_workspace.CreateNewProject(dialog.ProjectName);
+            NameBox.Text=dialog.ProjectName; IdBox.Text=dialog.PackageId; VersionBox.Text=string.IsNullOrWhiteSpace(dialog.PackageVersion)?"1.0.0":dialog.PackageVersion;
+            SourceBox.Text=layout.SourceDirectory; OutputBox.Text=layout.OutputDirectory;
+            var p=FromUi(); _projects.Save(layout.ProjectFile,p); _currentProjectPath=layout.ProjectFile;
+            _items=Array.Empty<ContentItem>(); ContentList.ItemsSource=_items; RefreshFolderCounts();
+            Log(string.Format(T("LogProjectCreated","Created project: {0}"),layout.RootDirectory));
+            OpenPath(layout.RootDirectory);
+        }
+        catch(Exception ex){Error(ex);}
+    }
+
+    private void RepairFolders_Click(object sender, RoutedEventArgs e)
+    {
+        try { EnsureCurrentStructure(log:true); RefreshFolderCounts(); }
+        catch(Exception ex){ Error(ex); }
+    }
+
+    private void OpenProjectFolder_Click(object sender, RoutedEventArgs e)
+    {
+        try { EnsureCurrentStructure(log:false); OpenPath(CurrentProjectRoot()); }
+        catch(Exception ex){ Error(ex); }
+    }
+
+    private void OpenSourceFolder_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if(sender is not FrameworkElement element || element.Tag is not string folder) return;
+            EnsureCurrentStructure(log:false); OpenPath(WorkspaceService.FolderPath(SourceBox.Text,folder));
+        }
+        catch(Exception ex){ Error(ex); }
+    }
+
+    private void ProjectFolder_DragOver(object sender, DragEventArgs e)
+    {
+        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void ProjectFolder_Drop(object sender, DragEventArgs e)
+    {
+        try
+        {
+            if(sender is not FrameworkElement element || element.Tag is not string folder || !e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            EnsureCurrentStructure(log:false);
+            var target=WorkspaceService.FolderPath(SourceBox.Text,folder); var paths=(string[])e.Data.GetData(DataFormats.FileDrop)!; var copied=0;
+            foreach(var path in paths)
+            {
+                if(File.Exists(path)) { CopyUnique(path,target); copied++; }
+                else if(Directory.Exists(path))
+                {
+                    foreach(var file in Directory.EnumerateFiles(path,"*",SearchOption.AllDirectories)) { CopyUnique(file,target); copied++; }
+                }
+            }
+            RefreshFolderCounts(); _items=Array.Empty<ContentItem>(); ContentList.ItemsSource=_items;
+            Log(string.Format(T("LogFilesDropped","Copied {0} file(s) to {1}."),copied,folder));
+        }
+        catch(Exception ex){ Error(ex); }
+    }
+
+    private void EnsureCurrentStructure(bool log)
+    {
+        _workspace.EnsureSourceTree(SourceBox.Text,OutputBox.Text);
+        RefreshFolderCounts();
+        if(log) Log(T("LogFoldersRepaired","Project folders checked and missing folders created."));
+    }
+
+    private void RefreshFolderCounts()
+    {
+        if(string.IsNullOrWhiteSpace(SourceBox.Text)) return;
+        static string Count(string root,string folder)
+        {
+            var path=Path.Combine(root,folder); return Directory.Exists(path) ? Directory.EnumerateFiles(path,"*",SearchOption.AllDirectories).Count().ToString() : "0";
+        }
+        AtakCountText.Text=Count(SourceBox.Text,"atak"); PluginsCountText.Text=Count(SourceBox.Text,"plugins"); MapsCountText.Text=Count(SourceBox.Text,"maps");
+        OverlaysCountText.Text=Count(SourceBox.Text,"overlays"); ConfigCountText.Text=Count(SourceBox.Text,"config"); DataCountText.Text=Count(SourceBox.Text,"data");
+    }
+
+    private string CurrentProjectRoot()
+    {
+        if(!string.IsNullOrWhiteSpace(_currentProjectPath)) return Path.GetDirectoryName(Path.GetFullPath(_currentProjectPath))!;
+        if(!string.IsNullOrWhiteSpace(SourceBox.Text))
+        {
+            var full=Path.GetFullPath(SourceBox.Text); var di=new DirectoryInfo(full); if(di.Name.Equals("source",StringComparison.OrdinalIgnoreCase) && di.Parent!=null) return di.Parent.FullName;
+            return full;
+        }
+        return _workspace.DefaultProjectsRoot;
+    }
+
+    private static void OpenPath(string path)
+    {
+        Directory.CreateDirectory(path);
+        Process.Start(new ProcessStartInfo(path){UseShellExecute=true});
+    }
+
+    private static void CopyUnique(string file,string target)
+    {
+        Directory.CreateDirectory(target); var name=Path.GetFileName(file); var dest=Path.Combine(target,name);
+        if(File.Exists(dest))
+        {
+            var stem=Path.GetFileNameWithoutExtension(name); var ext=Path.GetExtension(name); var i=2;
+            do dest=Path.Combine(target,$"{stem} ({i++}){ext}"); while(File.Exists(dest));
+        }
+        File.Copy(file,dest,false);
     }
 
     private void LoadServerTxt_Click(object sender, RoutedEventArgs e)
@@ -172,7 +317,7 @@ public partial class MainWindow : Window
         {
             var update=await _updates.CheckAsync();
             if(update==null){if(!silent)Log(T("NoBuilderUpdate","No newer Builder release on the configured channel."));return;}
-            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc1",update.Version));
+            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc3",update.Version));
             if(silent)return;
             if(MessageBox.Show(string.Format(T("BuilderUpdatePrompt","Builder {0} is available. Download the verified ZIP now?"),update.Version),T("UpdateTitle","Field TAK Hub Update"),MessageBoxButton.YesNo,MessageBoxImage.Information)!=MessageBoxResult.Yes)return;
             var path=await _updates.DownloadAsync(update); Log(string.Format(T("UpdateDownloaded","Update downloaded and SHA-256 verified: {0}"),path)); UpdateService.ShowInExplorer(path);

@@ -1,6 +1,7 @@
 <resources>
   <string name="app_name">Field TAK Hub</string>
-  <string name="app_title">Field TAK Hub 2.0.1 RC1</string>
+  <string name="app_title">Field TAK Hub 2.0.1 RC2</string>
+  <string name="brand_version">Wersja %1$s</string>
   <string name="back">Wstecz</string>
   <string name="cancel">Anuluj</string>
   <string name="settings">Ustawienia</string>

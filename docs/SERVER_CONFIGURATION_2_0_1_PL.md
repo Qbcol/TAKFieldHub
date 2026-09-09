@@ -1,6 +1,6 @@
 # Konfiguracja serwera TAK w Builderze 2.1.0 RC1
 
-Builder 2.1.0 RC1 pozwala zmieniać serwer bez edycji kodu i bez ręcznej edycji `.fthproj`.
+Builder 2.1.0 RC3 pozwala zmieniać serwer bez edycji kodu i bez ręcznej edycji `.fthproj`.
 
 ## GUI
 

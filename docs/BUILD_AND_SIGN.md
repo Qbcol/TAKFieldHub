@@ -63,13 +63,13 @@ python tests/source_gate.py
 RC1 uses:
 
 ```bash
-git tag -a v2.0.1-rc1 -m "Field TAK Hub 2.0.1 RC1 / Builder 2.1.0 RC1"
-git push origin v2.0.1-rc1
+git tag -a v2.0.1-rc2-builder-2.1.0-rc3 -m "Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC3"
+git push origin v2.0.1-rc2-builder-2.1.0-rc3
 ```
 
 The workflow publishes:
 
-- `FieldTAKHub-2.0.1-RC1.apk`
-- `FieldTAKHub-Builder-2.1.0-RC1-win-x64.zip`
+- `FieldTAKHub-2.0.1-RC2.apk`
+- `FieldTAKHub-Builder-2.1.0-RC3-win-x64.zip`
 - `fieldtak-release.json`
 - `SHA256SUMS.txt`

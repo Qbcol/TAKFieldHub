@@ -37,6 +37,16 @@ import org.fieldtak.hub.i18n.LanguageManager
 import org.fieldtak.hub.model.CheckState
 import org.fieldtak.hub.model.PluginInstallState
 import org.fieldtak.hub.ui.QrScanner
+import org.fieldtak.hub.ui.FieldTakHubTheme
+import org.fieldtak.hub.ui.FieldBrandHeader
+import org.fieldtak.hub.ui.FieldPrimaryButton
+import org.fieldtak.hub.ui.FieldOutlineButton
+import org.fieldtak.hub.ui.FieldTonalButton
+import org.fieldtak.hub.ui.FieldBg
+import org.fieldtak.hub.ui.FieldCyan
+import org.fieldtak.hub.ui.FieldGood
+import org.fieldtak.hub.ui.FieldRed
+import org.fieldtak.hub.ui.FieldMuted
 
 class MainActivity:AppCompatActivity(){
   private val vm:MainViewModel by viewModels()
@@ -46,7 +56,7 @@ class MainActivity:AppCompatActivity(){
     super.onCreate(savedInstanceState)
     val filter=IntentFilter().apply { addAction(Intent.ACTION_PACKAGE_ADDED); addAction(Intent.ACTION_PACKAGE_REPLACED); addAction(Intent.ACTION_PACKAGE_REMOVED); addDataScheme("package") }
     ContextCompat.registerReceiver(this,packageReceiver,filter,ContextCompat.RECEIVER_EXPORTED)
-    setContent{MaterialTheme{FieldTakApp(vm,this)}}
+    setContent{FieldTakHubTheme{FieldTakApp(vm,this)}}
     handleIntent(intent)
   }
   override fun onNewIntent(intent:Intent){super.onNewIntent(intent);setIntent(intent);handleIntent(intent)}
@@ -69,10 +79,11 @@ fun FieldTakApp(vm:MainViewModel,activity:MainActivity){
   val picker=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){u:Uri?->u?.let{vm.fromFile(it);while(stack.size>1)stack.removeAt(stack.lastIndex)}}
   var url by remember{mutableStateOf("")}
 
-  Scaffold(topBar={TopAppBar(
-    title={Text(stringResource(R.string.app_title))},
+  Scaffold(containerColor=FieldBg,topBar={TopAppBar(
+    title={Text(stringResource(R.string.app_title),fontWeight=FontWeight.Bold)},
     navigationIcon={if(stack.size>1) IconButton(onClick={back()}){Text("‹",style=MaterialTheme.typography.headlineMedium,modifier=Modifier.semantics{contentDescription=activity.getString(R.string.back)})}},
-    actions={IconButton(onClick={push(AppScreen.SETTINGS)}){Text("⚙",modifier=Modifier.semantics{contentDescription=activity.getString(R.string.settings)})}}
+    actions={IconButton(onClick={push(AppScreen.SETTINGS)}){Text("⚙",modifier=Modifier.semantics{contentDescription=activity.getString(R.string.settings)})}},
+    colors=TopAppBarDefaults.topAppBarColors(containerColor=FieldBg,titleContentColor=MaterialTheme.colorScheme.onBackground,navigationIconContentColor=FieldCyan,actionIconContentColor=FieldCyan)
   )}){pad->
     Box(Modifier.padding(pad).fillMaxSize()){
       when(screen){
@@ -92,16 +103,17 @@ fun FieldTakApp(vm:MainViewModel,activity:MainActivity){
 @Composable
 private fun HomeScreen(state:AppUiState,vm:MainViewModel,onScan:()->Unit,onImport:()->Unit,url:String,onUrl:(String)->Unit,onOpenUrl:()->Unit,onDetails:()->Unit,onService:()->Unit,onHistory:()->Unit){
   Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)){
+    FieldBrandHeader(stringResource(R.string.brand_version, BuildConfig.VERSION_NAME))
     val pkg=state.pkg
     if(pkg==null){
       Text(stringResource(R.string.prepare_title),style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)
       Text(stringResource(R.string.prepare_subtitle))
-      Button(onClick=onScan,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)){Text(stringResource(R.string.scan_qr))}
-      OutlinedButton(onClick=onImport,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.import_ftak))}
+      FieldPrimaryButton(onClick=onScan,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)){Text(stringResource(R.string.scan_qr))}
+      FieldOutlineButton(onClick=onImport,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.import_ftak))}
       HorizontalDivider()
       OutlinedTextField(value=url,onValueChange=onUrl,label={Text(stringResource(R.string.descriptor_url))},modifier=Modifier.fillMaxWidth(),singleLine=true)
-      FilledTonalButton(onClick=onOpenUrl,enabled=url.isNotBlank(),modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.open_link))}
-      if(state.history.isNotEmpty()) OutlinedButton(onClick=onHistory,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.history_count,state.history.size))}
+      FieldTonalButton(onClick=onOpenUrl,enabled=url.isNotBlank(),modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.open_link))}
+      if(state.history.isNotEmpty()) FieldOutlineButton(onClick=onHistory,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.history_count,state.history.size))}
       state.appUpdate?.let{UpdateCard(it.version,vm::installAppUpdate)}
       return@Column
     }
@@ -120,13 +132,13 @@ private fun HomeScreen(state:AppUiState,vm:MainViewModel,onScan:()->Unit,onImpor
     Text(headline,style=MaterialTheme.typography.titleLarge,fontWeight=FontWeight.Bold)
     r?.items?.take(6)?.forEach{ReadinessRow(it.label,it.state,it.detail)}
 
-    if(!state.trusted) FilledTonalButton(onClick=vm::trustPublisher,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.trust_publisher))}
-    Button(onClick=vm::preparePhone,modifier=Modifier.fillMaxWidth().heightIn(min=60.dp)){Text(if(state.session?.stage==DeploymentStage.COMPLETE)stringResource(R.string.check_again) else stringResource(R.string.finish_configuration))}
-    OutlinedButton(onClick=onDetails,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.details_checklist))}
-    OutlinedButton(onClick=onScan,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.scan_new_qr))}
+    if(!state.trusted) FieldTonalButton(onClick=vm::trustPublisher,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.trust_publisher))}
+    FieldPrimaryButton(onClick=vm::preparePhone,modifier=Modifier.fillMaxWidth().heightIn(min=60.dp)){Text(if(state.session?.stage==DeploymentStage.COMPLETE)stringResource(R.string.check_again) else stringResource(R.string.finish_configuration))}
+    FieldOutlineButton(onClick=onDetails,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.details_checklist))}
+    FieldOutlineButton(onClick=onScan,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.scan_new_qr))}
     Row(horizontalArrangement=Arrangement.spacedBy(10.dp),modifier=Modifier.fillMaxWidth()){
-      FilledTonalButton(onClick=onService,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text(stringResource(R.string.diagnostics))}
-      FilledTonalButton(onClick=onHistory,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text(stringResource(R.string.history))}
+      FieldTonalButton(onClick=onService,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text(stringResource(R.string.diagnostics))}
+      FieldTonalButton(onClick=onHistory,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text(stringResource(R.string.history))}
     }
     TextButton(onClick=vm::resetPackage,modifier=Modifier.align(Alignment.CenterHorizontally).heightIn(min=48.dp)){Text(stringResource(R.string.close_current_package))}
   }
@@ -137,7 +149,7 @@ private fun UpdateCard(version:String,onInstall:()->Unit){
   Card(Modifier.fillMaxWidth()){Column(Modifier.padding(14.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
     Text(stringResource(R.string.update),fontWeight=FontWeight.Bold)
     Text(stringResource(R.string.update_available,version))
-    Button(onClick=onInstall,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.download_update))}
+    FieldPrimaryButton(onClick=onInstall,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.download_update))}
   }}
 }
 
@@ -161,8 +173,8 @@ private fun DetailsScreen(state:AppUiState,vm:MainViewModel){
     HorizontalDivider()
     Text(stringResource(R.string.state_machine),style=MaterialTheme.typography.titleMedium,fontWeight=FontWeight.Bold)
     state.session?.steps?.sortedBy{it.updatedUtc}?.forEach{st->Text("${stepMark(st.result)} ${st.stage.name} — ${st.detail}",style=MaterialTheme.typography.bodySmall)}
-    Button(onClick=vm::preparePhone,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.repair_continue))}
-    OutlinedButton(onClick=vm::preflight,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.refresh_preflight))}
+    FieldPrimaryButton(onClick=vm::preparePhone,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.repair_continue))}
+    FieldOutlineButton(onClick=vm::preflight,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.refresh_preflight))}
   }
 }
 
@@ -176,14 +188,14 @@ private fun ServiceScreen(state:AppUiState,vm:MainViewModel,activity:MainActivit
   Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
     Text(stringResource(R.string.service_mode),style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)
     Text(stringResource(R.string.service_explanation))
-    Button(onClick=vm::runDiagnostics,enabled=state.pkg!=null,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.run_diagnostics))}
+    FieldPrimaryButton(onClick=vm::runDiagnostics,enabled=state.pkg!=null,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.run_diagnostics))}
     report?.checks?.forEach{ReadinessRow(it.label,it.state,it.detail+(if(it.technical.isNotBlank())"\n${it.technical}" else ""))}
     if(report!=null){
       OutlinedButton(onClick={ val cb=context.getSystemService(ClipboardManager::class.java); cb.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.report_title),report.asText())) },modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.copy_report))}
       OutlinedButton(onClick={saveReport.launch("fieldtak-report-${System.currentTimeMillis()}.txt")},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.save_report))}
       TextButton(onClick={vm.provisioning.shareText(activity,context.getString(R.string.report_title),report.asText())},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.share_report)) }
     }
-    OutlinedButton(onClick=vm::openAtak,enabled=state.pkg!=null,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.open_atak))}
+    FieldOutlineButton(onClick=vm::openAtak,enabled=state.pkg!=null,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.open_atak))}
   }
 }
 
@@ -218,9 +230,9 @@ private fun SettingsScreen(state:AppUiState,vm:MainViewModel){
     HorizontalDivider()
     Text(stringResource(R.string.storage),fontWeight=FontWeight.SemiBold)
     Text(stringResource(R.string.storage_usage,humanBytes(state.storageBytes)))
-    OutlinedButton(onClick=vm::cleanupStorage,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.cleanup_storage))}
+    FieldOutlineButton(onClick=vm::cleanupStorage,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.cleanup_storage))}
     HorizontalDivider()
-    Button(onClick={vm.checkForUpdates(false)},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.check_updates))}
+    FieldPrimaryButton(onClick={vm.checkForUpdates(false)},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.check_updates))}
     state.appUpdate?.let{UpdateCard(it.version,vm::installAppUpdate)}
     state.updateMessage?.let{Text(it)}
     Text(stringResource(R.string.local_http_warning),style=MaterialTheme.typography.bodySmall)
@@ -237,7 +249,8 @@ private fun ReadinessGauge(percent:Int){
 private fun ReadinessRow(label:String,state:CheckState,detail:String){
   val stateLabel=when(state){CheckState.READY->stringResource(R.string.status_ready);CheckState.ACTION_REQUIRED->stringResource(R.string.status_action_required);CheckState.PROBLEM->stringResource(R.string.status_problem);CheckState.UNKNOWN->stringResource(R.string.status_unknown)}
   val description=stringResource(R.string.accessibility_readiness_row,label,stateLabel,detail)
-  Row(Modifier.fillMaxWidth().semantics(mergeDescendants=true){contentDescription=description},horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.Top){Text("${statusMark(state)} $stateLabel",fontWeight=FontWeight.Bold);Column(Modifier.weight(1f)){Text(label,fontWeight=FontWeight.SemiBold);if(detail.isNotBlank())Text(detail,style=MaterialTheme.typography.bodySmall)}}
+  val statusColor=when(state){CheckState.READY->FieldGood;CheckState.ACTION_REQUIRED->FieldCyan;CheckState.PROBLEM->FieldRed;CheckState.UNKNOWN->FieldMuted}
+  Row(Modifier.fillMaxWidth().semantics(mergeDescendants=true){contentDescription=description},horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.Top){Text("${statusMark(state)} $stateLabel",fontWeight=FontWeight.Bold,color=statusColor);Column(Modifier.weight(1f)){Text(label,fontWeight=FontWeight.SemiBold);if(detail.isNotBlank())Text(detail,style=MaterialTheme.typography.bodySmall)}}
 }
 
 private fun statusMark(s:CheckState)=when(s){CheckState.READY->"✓";CheckState.ACTION_REQUIRED->"!";CheckState.PROBLEM->"✕";CheckState.UNKNOWN->"?"}

@@ -8,7 +8,7 @@ public sealed class SourceAnalyzer
     {
         if (!Directory.Exists(sourceDirectory)) throw new DirectoryNotFoundException(sourceDirectory);
         return Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories)
-            .Where(p => !Path.GetFileName(p).StartsWith('.'))
+            .Where(p => !Path.GetFileName(p).StartsWith('.') && !Path.GetFileName(p).Equals("README-WRZUC-PLIKI-TUTAJ.txt", StringComparison.OrdinalIgnoreCase))
             .Select(p => new ContentItem(p, Path.GetRelativePath(sourceDirectory, p).Replace('\\','/'), Category(p, sourceDirectory), new FileInfo(p).Length))
             .OrderBy(x => x.RelativePath, StringComparer.OrdinalIgnoreCase)
             .ToList();
