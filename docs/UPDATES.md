@@ -31,7 +31,7 @@ Each GitHub Release includes `fieldtak-release.json`:
     "sha256": "..."
   },
   "builder": {
-    "version": "2.1.0-rc5",
+    "version": "2.1.0-rc6",
     "asset": "FieldTAKHub-Builder-2.1.0-RC4-win-x64.zip",
     "sha256": "..."
   }

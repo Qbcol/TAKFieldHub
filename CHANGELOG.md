@@ -1,6 +1,27 @@
 # Changelog
 
-## 2.0.1 RC3 / Builder 2.1.0 RC5 — 2026-09-09
+## 2.0.1 RC4 / Builder 2.1.0 RC7 — 2026-09-09
+
+### Android — three explicit QR workflows
+- Keeps the proven RC2/RC3 Android layout and separates QR scanning into three clear actions.
+- **Prepare phone** accepts only Field TAK Hub provisioning/package QR codes and keeps the existing `.ftak` deployment flow.
+- **User enrollment from QR** accepts only `tak://com.atakmap.app/enroll?...` and immediately hands the secret-bearing enrollment URI to ATAK without persisting or logging the token.
+- **Data Packages from QR** accepts ATAK import QR URIs or safe HTTP(S) Data Package URLs (including OpenTAKServer download links) and hands them to ATAK for import.
+- Dedicated scanner overlays explain which OpenTAKServer QR should be scanned and reject a QR from the wrong workflow with a readable error.
+
+### Builder
+- Builder functionality from RC6 is retained, including LAN/cloud distribution, Google Drive share-link normalization and legacy 1.x import.
+- Builder version is RC7 so distributed binaries identify the paired Hub RC4 build consistently.
+
+## Builder 2.1.0 RC6 — 2026-09-09
+
+- Cloud distribution accepts standard Google Drive file-sharing links and converts them to a direct HTTPS download URL.
+- Google Drive folder links are rejected with a clear error.
+- Link testing reports when Google Drive permissions return HTML/login instead of package bytes.
+- Cloud QR still binds the normalized URL to the local `.ftak` SHA-256.
+
+
+## 2.0.1 RC3 / Builder 2.1.0 RC6 — 2026-09-09
 
 ### Android
 - fixed `FINISH CONFIGURATION` / `DOKOŃCZ KONFIGURACJĘ` when ATAK is missing and install-source permission is not yet granted;
@@ -51,6 +72,14 @@
 - tests and source-gate coverage for workspace automation.
 
 # Changelog
+
+## Builder 2.1.0 RC6 — 2026-09-09
+
+- Cloud distribution accepts standard Google Drive file-sharing links and converts them to a direct HTTPS download URL.
+- Google Drive folder links are rejected with a clear error.
+- Link testing reports when Google Drive permissions return HTML/login instead of package bytes.
+- Cloud QR still binds the normalized URL to the local `.ftak` SHA-256.
+
 
 ## Field TAK Hub 2.0.1 RC2 / Builder 2.1.0 RC1 — 2026-09-09
 

@@ -1,19 +1,16 @@
-FIELD TAK HUB 2.0.1 RC2 / BUILDER 2.1.0 RC4 — GITHUB WEB
-==========================================================
+FIELD TAK HUB 2.0.1 RC4 / BUILDER 2.1.0 RC7 — GITHUB PRZEZ PRZEGLĄDARKĘ
 
-1. Wgraj przez przeglądarkę całą zawartość tego katalogu do repozytorium.
-2. Folder .github jest ukryty, dlatego workflowy są dodatkowo w WORKFLOWS_FOR_GITHUB_WEB.
-3. Na GitHub utwórz pliki:
-   .github/workflows/source-gate.yml
-   .github/workflows/android.yml
-   .github/workflows/windows-builder.yml
-   .github/workflows/release.yml
-   i wklej do nich zawartość odpowiednich plików z WORKFLOWS_FOR_GITHUB_WEB.
-4. Uruchom Source Gate, Android i Windows Builder.
+1. Wgraj całą zawartość tej paczki do repozytorium Qbcol/TAKFieldHub.
+2. Jeśli przeglądarka nie pozwala łatwo wgrać ukrytego folderu .github:
+   - wejdź w Actions -> New workflow / set up a workflow yourself,
+   - utwórz kolejno pliki .github/workflows/source-gate.yml, android.yml,
+     windows-builder.yml i release.yml,
+   - skopiuj ich treść z folderu WORKFLOWS_FOR_GITHUB_WEB.
+3. Uruchom kolejno Source Gate, Android i Windows Builder.
+4. Android RC4 ma trzy osobne skanery QR:
+   - Przygotuj telefon (Field TAK provisioning/.ftak),
+   - Enrollment użytkownika (QR z UI OpenTAKServer),
+   - Data Packages (QR/link z OpenTAKServer do importu w ATAK).
+5. Builder RC7 zachowuje dystrybucję LAN, chmurę/HTTPS, Google Drive oraz import ZIP 1.x.
 
-RC4:
-- powrót do czytelnego pierwotnego layoutu Buildera,
-- zachowana ikona 1.9,
-- Importuj ZIP 1.x,
-- weryfikacja RSA + SHA-256 starej paczki,
-- bezpośredni ATAK APK: source/atak/*.apk -> payload/atak/atak.apk.
+Instrukcja testu: TEST_DZISIAJ_RC4_RC7_PL.md

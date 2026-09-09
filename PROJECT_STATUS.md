@@ -1,4 +1,4 @@
-# Field TAK Hub 2.0.1 RC3 / Builder 2.1.0 RC5 — Project Status
+# Field TAK Hub 2.0.1 RC4 / Builder 2.1.0 RC7 — Project Status
 
 ## Implemented in RC1
 
@@ -37,8 +37,8 @@ The first browser-driven GitHub Actions run exposed CI-only build blockers that 
 ## Validation completed in this environment
 
 - source gate: PASS
-- Android PL/EN resource parity: 162/162
-- Builder PL/EN resource parity: 78/78
+- Android PL/EN resource parity: 183/183
+- Builder PL/EN resource parity: 122/122
 - all JSON, XML, XAML and GitHub Actions YAML parsed successfully
 - pure Kotlin URL-policy/version utilities compiled with local `kotlinc`
 - release-manifest generator contract test passed with SHA-256 verification
@@ -71,11 +71,18 @@ RC4 also adds a controlled **Import legacy 1.x ZIP** path. Legacy `manifest.json
 The earlier RC1 code path reached green GitHub Actions for Android, Windows Builder and Source Gate. This exact RC4 commit must still pass the three workflows before release promotion.
 
 
-## RC3 / RC5 same-day field-test improvements
+## RC4 / RC7 dedicated OpenTAK QR workflows
 
-- Android RC3 keeps the RC2 layout.
+- Android RC4 keeps the RC2/RC3 layout and adds three dedicated QR buttons without changing the overall visual structure.
 - `DOKOŃCZ KONFIGURACJĘ` now opens the per-app unknown-sources setting when required and resumes after permission is granted.
-- QR scanner routes Field TAK provisioning, direct cloud `.ftak`, ATAK/OpenTAK enrollment and ATAK data-package import.
-- Builder RC5 adds direct HTTPS cloud distribution with URL probe, local SHA-256 binding, expiry, QR PNG/TXT output and no TLS bypass.
+- QR scanner now has separate provisioning, enrollment and Data Package entry points; the universal deep-link router remains for backwards compatibility.
+- Builder RC7 retains RC6 direct HTTPS/Google Drive cloud distribution with URL probe, local SHA-256 binding, expiry, QR PNG/TXT output and no TLS bypass.
 - `.ftak` schema stays at v2.
-- This exact RC3/RC5 source still requires a fresh Android + Windows Builder GitHub Actions run before release promotion.
+- This exact RC4/RC7 source still requires a fresh Android + Windows Builder GitHub Actions run before release promotion.
+
+### Dedicated QR actions in Android RC4
+- Prepare phone / Field TAK provisioning QR.
+- OpenTAKServer user enrollment QR (`tak://com.atakmap.app/enroll?...`).
+- OpenTAKServer/ATAK Data Package import QR or safe Data Package URL.
+- Enrollment tokens are not persisted/logged; enrollment is handed to ATAK.
+- The Android visual layout remains the RC2/RC3 layout requested for field use.

@@ -4,10 +4,10 @@
 
 This repository contains:
 
-- **Field TAK Hub 2.0.1 RC3 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
-- **Field TAK Hub Builder 2.1.0 RC5 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
+- **Field TAK Hub 2.0.1 RC4 for Android** — scans a provisioning QR, downloads or imports a signed `.ftak` bundle, verifies it, checks device readiness and guides the user through ATAK/plugin/data provisioning.
+- **Field TAK Hub Builder 2.1.0 RC7 for Windows** — creates signed `.ftak` packages, builds ATAK Mission Packages, edits TAK server profiles, serves packages over LAN and generates provisioning QR codes.
 
-> Status: **Release Candidate 3 (Android) / Release Candidate 5 (Builder)**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
+> Status: **Release Candidate 4 (Android) / Release Candidate 7 (Builder)**, not yet Stable. The feature scope is frozen. RC testing should focus on build/signing, device compatibility, interrupted deployments, update paths and field reliability.
 
 ## Key features
 
@@ -20,6 +20,7 @@ This repository contains:
 - ATAK CIV detection and target-version checks
 - ATAK plugin APK version comparison
 - system-guided APK installation and Mission Package hand-off
+- **three dedicated QR workflows**: phone provisioning, OpenTAKServer user enrollment, and OpenTAKServer/ATAK Data Package import
 - pre-flight storage/network/ATAK/plugin checks
 - OpenTAK DNS/TCP diagnostics
 - readiness percentage, checklist, history and retry
@@ -31,7 +32,9 @@ This repository contains:
 
 ### Windows Builder
 
-Builder 2.1.0 RC5 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC4_FROM_SCRATCH_EN.md` (workspace flow remains valid for RC5).
+Builder 2.1.0 RC7 automatically creates and repairs the project workspace (`source/atak`, `plugins`, `maps`, `overlays`, `config`, `data`, and `out`). **New Project** creates a ready-to-use portable project, project-folder rows support drag-and-drop, and existing files are never silently overwritten. See `docs/BUILDER_2_1_RC4_FROM_SCRATCH_EN.md` (workspace flow remains valid for RC7).
+
+RC6 cloud distribution also accepts normal **Google Drive file sharing links**. Builder extracts the file ID, converts the share URL to a direct HTTPS download URL, tests that it returns package bytes, and then generates the normal SHA-256-bound provisioning QR. Google Drive folder links are not accepted.
 
 RC5 keeps the clearer pre-dark-theme Builder layout while retaining the 1.9 application icon. It also adds **Import legacy 1.x ZIP**: a signed 1.x deployment can be verified (RSA + SHA-256), migrated into a fresh 2.x project and rebuilt as an Ed25519-signed `.ftak` v2. A single ATAK APK placed in `source/atak/` is now emitted as `payload/atak/atak.apk` instead of being nested inside the Mission Package.
 
@@ -124,7 +127,7 @@ The gate verifies version consistency, PL/EN resource parity, JSON/XML/XAML synt
 - web: `8443`
 - ATAK target: `5.6` through `5.8`
 
-These are **example/default values only**. In Builder 2.1.0 RC5 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
+These are **example/default values only**. In Builder 2.1.0 RC7 you can edit the server host and ports directly in the GUI, import a `server.txt`, or edit the project file. Building the package regenerates the signed server metadata and, unless you supplied your own `.pref`, the ATAK `server.pref`.
 
 ## Typical field workflow
 
@@ -192,7 +195,7 @@ Read [`SECURITY.md`](SECURITY.md) and [`docs/SECURITY_MODEL.md`](docs/SECURITY_M
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — architecture overview
 - [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) — RC → Stable checklist
 - [`docs/RC2_VALIDATION.md`](docs/RC2_VALIDATION.md) — checks performed and remaining release gates
-- [`TEST_DZISIAJ_RC3_RC5_PL.md`](TEST_DZISIAJ_RC3_RC5_PL.md) — szybki scenariusz testu RC3/RC5 na telefonie i w Builderze
+- [`TEST_DZISIAJ_RC3_RC5_PL.md`](TEST_DZISIAJ_RC3_RC5_PL.md) — szybki scenariusz testu RC3/RC6 na telefonie i w Builderze
 
 ## Release policy
 

@@ -95,7 +95,7 @@ cloud=ROOT/'apps/builder/FieldTakHub.Builder/Services/CloudDistributionService.c
 if not cloud.exists(): fail('Builder CloudDistributionService missing')
 else:
     cloud_text=cloud.read_text(encoding='utf-8')
-    for token in ('RequireHttps','CreateDeepLink','SHA256.HashData','packageUrl=','packageBytes=','expiresUtc='):
+    for token in ('RequireHttps','ResolvePackageUrl','drive.usercontent.google.com','FTH-CLOUD-003','CreateDeepLink','SHA256.HashData','packageUrl=','packageBytes=','expiresUtc='):
         if token not in cloud_text: fail(f'Builder cloud distribution contract missing {token}')
 legacy=ROOT/'apps/builder/FieldTakHub.Builder/Services/LegacyPackageImporter.cs'
 if not legacy.exists(): fail('Builder legacy 1.x importer missing')
@@ -126,6 +126,10 @@ provisioning=read('apps/android/app/src/main/java/org/fieldtak/hub/provision/Pro
 for token in ('handleInput','packageUrl','openTakUri','openTakImportUrl'):
     haystack=vm if token in ('handleInput','packageUrl') else provisioning
     if token not in haystack: fail(f'Android universal QR contract missing {token}')
+for token in ('handleProvisioningQr','handleEnrollmentQr','handleDataPackageQr'):
+    if token not in vm: fail(f'Android dedicated QR workflow missing {token}')
+for token in ('SCAN_PROVISIONING','SCAN_ENROLLMENT','SCAN_DATA_PACKAGE','prepare_phone_action','enrollment_user_action','data_packages_action'):
+    if token not in main_activity: fail(f'Android dedicated QR UI missing {token}')
 for token in ('ACTION_MANAGE_UNKNOWN_APP_SOURCES','canRequestPackageInstalls'):
     if token not in provisioning: fail(f'Android unknown-sources handoff missing {token}')
 for asset in ('apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml','apps/builder/FieldTakHub.Builder/Assets/tak-field-hub-icon-1.9.png','apps/builder/FieldTakHub.Builder/Assets/tak-field-hub-builder.ico'):

@@ -2,7 +2,7 @@
 
 ## Create a project
 
-1. Start **Field TAK Hub Builder 2.1.0 RC5**.
+1. Start **Field TAK Hub Builder 2.1.0 RC6**.
 2. Set the package name, package ID and package version.
 3. Choose the source folder and output folder.
 4. Set the ATAK minimum/maximum version.
