@@ -95,7 +95,7 @@ public sealed class DistributionServer : IDisposable
 
                 if (string.Equals(requestPath, descriptorPath, StringComparison.Ordinal))
                 {
-                    var packageUrl = $"http://{_advertisedIp}:{_port}{Uri.EscapeUriString(packageRoute)}";
+                    var packageUrl = $"http://{_advertisedIp}:{_port}/p/{Uri.EscapeDataString(_token)}/{Uri.EscapeDataString(Path.GetFileName(_packagePath))}";
                     var body = JsonSerializer.SerializeToUtf8Bytes(new
                     {
                         schema = "fieldtak.provision", version = 1, packageUrl,

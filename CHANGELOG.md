@@ -27,6 +27,9 @@
 
 ### Fixed
 
+- fixed second real GitHub Actions compile blockers: imported `androidx.activity.compose.setContent`, corrected the SCAN back-button callback, corrected the download progress pair to use `Long`, and added explicit `System.IO` imports required by the Builder compiler
+- hardened Builder test compilation with explicit `System`, `System.IO`, and `System.Linq` imports
+- replaced obsolete `Uri.EscapeUriString` usage in the LAN distribution URL with segment-safe `Uri.EscapeDataString` encoding
 - fixed GitHub Actions Android SDK provisioning for the Android 17 preview package (`platforms;android-37.0`) and added a compatibility alias for tools resolving `compileSdk = 37`
 - fixed Windows Builder CI compilation blockers reported by the first real GitHub Actions run: removed WinForms namespace collisions, switched folder selection to WPF `OpenFolderDialog`, added explicit IO/HTTP imports, and renamed the Mission Package XML helper that collided with the internal `Entry` record
 - removed the redundant `System.Security.Cryptography.ProtectedData` package reference on .NET 10 Windows

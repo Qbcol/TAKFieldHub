@@ -1,0 +1,26 @@
+CI HOTFIX 2 — NAJPROSTSZA AKTUALIZACJA ISTNIEJĄCEGO REPO PRZEZ PRZEGLĄDARKĘ
+
+Podmień pliki z tej paczki w tych samych ścieżkach repozytorium GitHub.
+Najważniejsze pliki dla builda:
+
+Android:
+- apps/android/app/src/main/java/org/fieldtak/hub/MainActivity.kt
+- apps/android/app/src/main/java/org/fieldtak/hub/MainViewModel.kt
+
+Windows Builder:
+- apps/builder/FieldTakHub.Builder/Services/FtakPackageBuilder.cs
+- apps/builder/FieldTakHub.Builder/Services/UpdateService.cs
+- apps/builder/FieldTakHub.Builder/Services/DistributionServer.cs
+- apps/builder/FieldTakHub.Builder.Tests/BuilderCoreTests.cs
+
+Gate:
+- tests/source_gate.py
+
+Pozostałe pliki to dokumentacja zmian.
+
+Po commicie uruchom:
+Actions -> Source Gate -> Run workflow
+Actions -> Android -> Run workflow
+Actions -> Windows Builder -> Run workflow
+
+Nie uruchamiaj jeszcze Release.

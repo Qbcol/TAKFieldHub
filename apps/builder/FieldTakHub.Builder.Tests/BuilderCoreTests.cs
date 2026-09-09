@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Linq;
 using System.IO.Compression;
 using FieldTakHub.Builder.Models;
 using FieldTakHub.Builder.Services;

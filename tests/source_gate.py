@@ -64,6 +64,25 @@ for token in ('packageBytes','recommendedFreeBytes'):
     if token not in models: fail(f'Android provision descriptor model missing {token}')
     if token not in vm: fail(f'Android pre-download storage check missing {token}')
 
+# Known compile-contract checks learned from real RC CI runs.
+main_activity=read('apps/android/app/src/main/java/org/fieldtak/hub/MainActivity.kt')
+if 'setContent{' in main_activity and 'import androidx.activity.compose.setContent' not in main_activity:
+    fail('Android MainActivity uses setContent without androidx.activity.compose.setContent import')
+if re.search(r'onClick\s*=\s*\{\s*back\s*\}', main_activity):
+    fail('Android onClick contains bare local back function instead of invoking/passing it')
+if re.search(r'progress\s*=\s*0\s+to\s+null', vm):
+    fail('Android progress pair uses Int zero; expected Long')
+for rel in ('apps/builder/FieldTakHub.Builder/Services/FtakPackageBuilder.cs','apps/builder/FieldTakHub.Builder/Services/UpdateService.cs'):
+    txt=read(rel)
+    if 'using System.IO;' not in txt:
+        fail(f'Builder compile contract missing explicit System.IO in {rel}')
+if 'Uri.EscapeUriString(' in dist:
+    fail('Builder uses obsolete Uri.EscapeUriString')
+builder_tests=read('apps/builder/FieldTakHub.Builder.Tests/BuilderCoreTests.cs')
+for required_using in ('using System;','using System.IO;','using System.Linq;'):
+    if required_using not in builder_tests:
+        fail(f'Builder tests compile contract missing {required_using}')
+
 # Parse source JSON/XML/XAML.
 for p in ROOT.rglob('*.json'):
     if any(x in p.parts for x in ('.git','build','bin','obj')): continue

@@ -86,7 +86,7 @@ class MainViewModel(app:Application):AndroidViewModel(app){
       session=session.copy(packageUrl=descriptor.packageUrl,updatedUtc=Instant.now().toString()).also(store::saveActive)
       session=engine.transition(session,DeploymentStage.DESCRIPTOR_VERIFIED,StepResult.READY,text(R.string.vm_descriptor_valid))
       session=engine.transition(session,DeploymentStage.DOWNLOADING,StepResult.RUNNING,text(R.string.vm_downloading_resume))
-      update(session=session,busy=text(R.string.vm_downloading_package),progress=0 to null)
+      update(session=session,busy=text(R.string.vm_downloading_package),progress=0L to null)
       val key=stableKey(descriptor.packageUrl)
       val f=repo.downloadResumable(descriptor.packageUrl,key,descriptor.packageSha256){cur,total->_state.value=_state.value.copy(downloadCurrent=cur,downloadTotal=total)}
       session=engine.transition(session,DeploymentStage.BUNDLE_DOWNLOADED,StepResult.READY,text(R.string.vm_package_downloaded))

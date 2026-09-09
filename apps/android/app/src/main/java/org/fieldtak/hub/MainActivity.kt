@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -76,7 +77,7 @@ fun FieldTakApp(vm:MainViewModel,activity:MainActivity){
     Box(Modifier.padding(pad).fillMaxSize()){
       when(screen){
         AppScreen.HOME->HomeScreen(state,vm,onScan={push(AppScreen.SCAN)},onImport={picker.launch(arrayOf("application/zip","application/octet-stream","application/vnd.fieldtak.package"))},url=url,onUrl={url=it},onOpenUrl={vm.fromDescriptor(url)},onDetails={push(AppScreen.DETAILS)},onService={push(AppScreen.SERVICE)},onHistory={push(AppScreen.HISTORY)})
-        AppScreen.SCAN->Box(Modifier.fillMaxSize()){QrScanner{v->back();vm.fromDescriptor(v)};FilledTonalButton(onClick={back},modifier=Modifier.align(Alignment.BottomCenter).padding(24.dp).heightIn(min=48.dp)){Text(stringResource(R.string.cancel))}}
+        AppScreen.SCAN->Box(Modifier.fillMaxSize()){QrScanner{v->back();vm.fromDescriptor(v)};FilledTonalButton(onClick={back()},modifier=Modifier.align(Alignment.BottomCenter).padding(24.dp).heightIn(min=48.dp)){Text(stringResource(R.string.cancel))}}
         AppScreen.DETAILS->DetailsScreen(state,vm)
         AppScreen.SERVICE->ServiceScreen(state,vm,activity)
         AppScreen.HISTORY->HistoryScreen(state,vm)

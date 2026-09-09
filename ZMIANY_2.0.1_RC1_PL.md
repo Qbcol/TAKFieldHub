@@ -19,3 +19,16 @@ Najważniejsze zmiany przed wydaniem Stable:
 Dodatkowo podczas walidacji naprawiono dwa istotne błędy: zgodność podpisanej listy plików `.ftak` dla `META-INF/server.txt` oraz wykrywanie kolejnych prerelease’ów GitHub przez updater.
 
 RC1 pozostaje kandydatem do wydania. `Stable` powinien zostać oznaczony dopiero po przejściu checklisty terenowej i podpisaniu Buildera Authenticode.
+
+## CI Hotfix 2
+
+Drugi rzeczywisty build GitHub Actions ujawnił kolejne błędy kompilacji. Poprawiono:
+
+- brak importu `androidx.activity.compose.setContent` w Androidzie,
+- callback przycisku Wstecz na ekranie skanera QR,
+- typ licznika postępu pobierania (`Long`),
+- jawne `System.IO` w `FtakPackageBuilder.cs` i `UpdateService.cs`,
+- importy wymagane przez testy Buildera,
+- przestarzałe `Uri.EscapeUriString` w serwerze LAN.
+
+Source Gate został rozszerzony o kontrole tych regresji.
