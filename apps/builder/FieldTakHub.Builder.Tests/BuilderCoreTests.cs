@@ -82,4 +82,28 @@ public class BuilderCoreTests
         Assert.Throws<InvalidDataException>(()=>CloudDistributionService.CreateDeepLink("http://example.org/test.ftak",ftak,DateTimeOffset.UtcNow.AddHours(1),"Test"));
     }
 
+    [Fact]
+    public void GoogleDriveShareLinkIsNormalizedForCloudQr()
+    {
+        var resolved=CloudDistributionService.ResolvePackageUrl("https://drive.google.com/file/d/1AbC_def-123/view?usp=sharing");
+        Assert.Equal("Google Drive",resolved.Provider);
+        Assert.True(resolved.WasNormalized);
+        Assert.Equal("1AbC_def-123",resolved.FileId);
+        Assert.Equal("https://drive.usercontent.google.com/download?id=1AbC_def-123&export=download&confirm=t",resolved.DownloadUrl);
+    }
+
+    [Fact]
+    public void GoogleDriveOpenLinkIsNormalizedAndKeepsResourceKey()
+    {
+        var resolved=CloudDistributionService.ResolvePackageUrl("https://drive.google.com/open?id=FILE123&resourcekey=RK456");
+        Assert.Contains("id=FILE123",resolved.DownloadUrl);
+        Assert.Contains("resourcekey=RK456",resolved.DownloadUrl);
+    }
+
+    [Fact]
+    public void GoogleDriveFolderLinkIsRejected()
+    {
+        Assert.Throws<InvalidDataException>(()=>CloudDistributionService.ResolvePackageUrl("https://drive.google.com/drive/folders/FOLDER123?usp=sharing"));
+    }
+
 }

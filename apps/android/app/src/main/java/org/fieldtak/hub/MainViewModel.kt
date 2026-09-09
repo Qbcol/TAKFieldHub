@@ -71,8 +71,67 @@ class MainViewModel(app:Application):AndroidViewModel(app){
     return String.format(java.util.Locale.getDefault(),"%.1f %sB",bytes/Math.pow(unit,exp.toDouble()),prefix)
   }
 
-  /** Universal input router used by the QR scanner and manual link field.
-   * It deliberately does not persist or log tak:// enrollment tokens.
+  /** Dedicated provisioning QR entry point: Field TAK packages/descriptors only. */
+  fun handleProvisioningQr(value:String){
+    val t=value.trim()
+    if(t.isBlank()){ _state.value=_state.value.copy(error=text(R.string.vm_empty_qr)); return }
+    runCatching {
+      when {
+        t.startsWith("fieldtak://provision",true) -> {
+          val uri=Uri.parse(t)
+          val direct=uri.getQueryParameter("packageUrl")
+          if(!direct.isNullOrBlank()) {
+            val sha=uri.getQueryParameter("sha256")?.takeIf{it.isNotBlank()}
+            val bytes=uri.getQueryParameter("packageBytes")?.toLongOrNull()
+            val expires=uri.getQueryParameter("expiresUtc")?.takeIf{it.isNotBlank()}
+            fromDirectPackageUrl(direct,sha,bytes,expires,t)
+          } else fromDescriptor(t)
+        }
+        t.startsWith("https://",true) || t.startsWith("http://",true) -> {
+          val uri=Uri.parse(t)
+          val name=(uri.lastPathSegment ?: "").lowercase()
+          if(name.endsWith(".ftak")) fromDirectPackageUrl(t,null,null,null,t) else fromDescriptor(t)
+        }
+        else -> error(text(R.string.vm_expected_provisioning_qr))
+      }
+    }.onFailure { fail(it) }
+  }
+
+  /** Dedicated OpenTAK/ATAK enrollment QR entry point. The token is never persisted or logged. */
+  fun handleEnrollmentQr(value:String){
+    val t=value.trim()
+    if(t.isBlank()){ _state.value=_state.value.copy(error=text(R.string.vm_empty_qr)); return }
+    runCatching {
+      val uri=Uri.parse(t)
+      val action=uri.pathSegments.firstOrNull()?.lowercase()
+      require(uri.scheme.equals("tak",true) && uri.host.equals("com.atakmap.app",true) && action=="enroll") {
+        text(R.string.vm_expected_enrollment_qr)
+      }
+      handOffTakUri(t)
+    }.onFailure { fail(it) }
+  }
+
+  /** Dedicated OpenTAK Data Package QR entry point. Accepts ATAK import URIs or direct safe URLs. */
+  fun handleDataPackageQr(value:String){
+    val t=value.trim()
+    if(t.isBlank()){ _state.value=_state.value.copy(error=text(R.string.vm_empty_qr)); return }
+    runCatching {
+      when {
+        t.startsWith("tak://",true) -> {
+          val uri=Uri.parse(t)
+          val action=uri.pathSegments.firstOrNull()?.lowercase()
+          require(uri.host.equals("com.atakmap.app",true) && action=="import") { text(R.string.vm_expected_data_package_qr) }
+          handOffTakUri(t)
+        }
+        t.startsWith("https://",true) || t.startsWith("http://",true) -> handOffDataPackageUrl(t)
+        else -> error(text(R.string.vm_expected_data_package_qr))
+      }
+    }.onFailure { fail(it) }
+  }
+
+  /** Universal input router used by deep links and the manual link field.
+   * Dedicated scanner buttons above use stricter routing so an enrollment QR cannot be
+   * accidentally treated as a phone-provisioning package (and vice versa).
    */
   fun handleInput(value:String){
     val t=value.trim()

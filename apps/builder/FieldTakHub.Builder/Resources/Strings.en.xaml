@@ -1,8 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=System.Runtime">
-  <sys:String x:Key="WindowTitle">Field TAK Hub Builder 2.1.0 RC5</sys:String>
+  <sys:String x:Key="WindowTitle">Field TAK Hub Builder 2.1.0 RC7</sys:String>
   <sys:String x:Key="HeaderTitle">FIELD TAK HUB BUILDER</sys:String>
   <sys:String x:Key="Tagline">PROVISION • DEPLOY • READY</sys:String>
-  <sys:String x:Key="HeaderVersion">Builder 2.1.0 RC5 • Hub 2.0.1 RC3</sys:String>
+  <sys:String x:Key="HeaderVersion">Builder 2.1.0 RC7 • Hub 2.0.1 RC4</sys:String>
   <sys:String x:Key="Project">Project</sys:String><sys:String x:Key="Name">Name</sys:String><sys:String x:Key="PackageId">Package ID</sys:String><sys:String x:Key="Version">Version</sys:String><sys:String x:Key="Publisher">Publisher</sys:String>
   <sys:String x:Key="Source">Source</sys:String><sys:String x:Key="Output">Output</sys:String><sys:String x:Key="Browse">_Browse</sys:String>
   <sys:String x:Key="AtakTarget">ATAK target</sys:String><sys:String x:Key="Min">Min</sys:String><sys:String x:Key="Max">Max</sys:String>
@@ -40,7 +40,7 @@
   <sys:String x:Key="UpdateDownloaded">Update downloaded and SHA-256 verified: {0}</sys:String>
   <sys:String x:Key="UpdateSkipped">Update check skipped: {0}</sys:String>
   <sys:String x:Key="ErrorPrefix">ERROR</sys:String>
-  <sys:String x:Key="Footer">Field TAK Hub 2.0.1 RC3 — Builder 2.1.0 RC5</sys:String>
+  <sys:String x:Key="Footer">Field TAK Hub 2.0.1 RC4 — Builder 2.1.0 RC7</sys:String>
   <sys:String x:Key="ImportLegacy">_Import legacy 1.x ZIP</sys:String><sys:String x:Key="LegacyZipFilter">TAK Field Hub 1.x ZIP (*.zip)|*.zip|All files (*.*)|*.*</sys:String><sys:String x:Key="LegacyVerified">verified</sys:String><sys:String x:Key="LegacyNotPresent">not present</sys:String>
   <sys:String x:Key="LogLegacyImported">Imported legacy 1.x ZIP into a new 2.x project. Files: {0}; RSA signature: {1}; SHA-256: OK. Project: {2}</sys:String><sys:String x:Key="LegacyImportSummary">Legacy package imported successfully.\n\nFiles: {0}\nRSA signature: {1}\nSHA-256: OK\n\nClick BUILD PACKAGE to create a new Ed25519-signed .ftak v2.</sys:String>
   <sys:String x:Key="NewProject">_New project</sys:String><sys:String x:Key="CreateProject">_Create project</sys:String><sys:String x:Key="NewProjectHelp">Builder creates the complete project folder structure automatically.</sys:String>
@@ -51,11 +51,11 @@
 
   <sys:String x:Key="DistributionLan">LAN distribution</sys:String>
   <sys:String x:Key="CloudDistribution">External / cloud distribution</sys:String>
-  <sys:String x:Key="CloudHelp">Upload the exact .ftak file to your HTTPS storage, paste its direct download URL, test it and generate a QR bound to the local SHA-256.</sys:String>
+  <sys:String x:Key="CloudHelp">Upload the exact .ftak file to cloud storage. You can paste a direct HTTPS URL or a normal Google Drive sharing link for one file — Builder converts it to a download URL, tests it, and generates a QR bound to the local SHA-256.</sys:String>
   <sys:String x:Key="LocalPackage">Local .ftak package</sys:String>
-  <sys:String x:Key="ExternalPackageUrl">Direct HTTPS link to uploaded .ftak</sys:String>
+  <sys:String x:Key="ExternalPackageUrl">HTTPS .ftak URL or Google Drive sharing link</sys:String>
   <sys:String x:Key="SelectFtak">Select .ftak</sys:String>
-  <sys:String x:Key="TestCloudLink">Test cloud link</sys:String>
+  <sys:String x:Key="TestCloudLink">Test / recognize link</sys:String>
   <sys:String x:Key="GenerateCloudQr">Generate cloud QR</sys:String>
   <sys:String x:Key="CopyDeepLink">Copy deep-link</sys:String>
   <sys:String x:Key="SaveQrPng">Save QR PNG…</sys:String>

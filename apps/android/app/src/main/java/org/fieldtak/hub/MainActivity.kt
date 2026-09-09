@@ -69,7 +69,7 @@ class MainActivity:AppCompatActivity(){
   }
 }
 
-enum class AppScreen { HOME, SCAN, DETAILS, SERVICE, HISTORY, SETTINGS }
+enum class AppScreen { HOME, SCAN_PROVISIONING, SCAN_ENROLLMENT, SCAN_DATA_PACKAGE, DETAILS, SERVICE, HISTORY, SETTINGS }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,8 +91,33 @@ fun FieldTakApp(vm:MainViewModel,activity:MainActivity){
   )}){pad->
     Box(Modifier.padding(pad).fillMaxSize()){
       when(screen){
-        AppScreen.HOME->HomeScreen(state,vm,onScan={push(AppScreen.SCAN)},onImport={picker.launch(arrayOf("application/zip","application/octet-stream","application/vnd.fieldtak.package"))},url=url,onUrl={url=it},onOpenUrl={vm.handleInput(url)},onDetails={push(AppScreen.DETAILS)},onService={push(AppScreen.SERVICE)},onHistory={push(AppScreen.HISTORY)})
-        AppScreen.SCAN->Box(Modifier.fillMaxSize()){QrScanner{v->back();vm.handleInput(v)};FilledTonalButton(onClick={back()},modifier=Modifier.align(Alignment.BottomCenter).padding(24.dp).heightIn(min=48.dp)){Text(stringResource(R.string.cancel))}}
+        AppScreen.HOME->HomeScreen(
+          state,vm,
+          onProvisioningScan={push(AppScreen.SCAN_PROVISIONING)},
+          onEnrollmentScan={push(AppScreen.SCAN_ENROLLMENT)},
+          onDataPackageScan={push(AppScreen.SCAN_DATA_PACKAGE)},
+          onImport={picker.launch(arrayOf("application/zip","application/octet-stream","application/vnd.fieldtak.package"))},
+          url=url,onUrl={url=it},onOpenUrl={vm.handleInput(url)},
+          onDetails={push(AppScreen.DETAILS)},onService={push(AppScreen.SERVICE)},onHistory={push(AppScreen.HISTORY)}
+        )
+        AppScreen.SCAN_PROVISIONING->QrPurposeScreen(
+          title=stringResource(R.string.scan_provisioning_title),
+          hint=stringResource(R.string.scan_provisioning_hint),
+          onCancel={back()},
+          onValue={v->back();vm.handleProvisioningQr(v)}
+        )
+        AppScreen.SCAN_ENROLLMENT->QrPurposeScreen(
+          title=stringResource(R.string.scan_enrollment_title),
+          hint=stringResource(R.string.scan_enrollment_hint),
+          onCancel={back()},
+          onValue={v->back();vm.handleEnrollmentQr(v)}
+        )
+        AppScreen.SCAN_DATA_PACKAGE->QrPurposeScreen(
+          title=stringResource(R.string.scan_data_package_title),
+          hint=stringResource(R.string.scan_data_package_hint),
+          onCancel={back()},
+          onValue={v->back();vm.handleDataPackageQr(v)}
+        )
         AppScreen.DETAILS->DetailsScreen(state,vm)
         AppScreen.SERVICE->ServiceScreen(state,vm,activity)
         AppScreen.HISTORY->HistoryScreen(state,vm)
@@ -105,14 +130,37 @@ fun FieldTakApp(vm:MainViewModel,activity:MainActivity){
 }
 
 @Composable
-private fun HomeScreen(state:AppUiState,vm:MainViewModel,onScan:()->Unit,onImport:()->Unit,url:String,onUrl:(String)->Unit,onOpenUrl:()->Unit,onDetails:()->Unit,onService:()->Unit,onHistory:()->Unit){
+private fun QrPurposeScreen(title:String,hint:String,onCancel:()->Unit,onValue:(String)->Unit){
+  Box(Modifier.fillMaxSize()){
+    QrScanner(onValue=onValue)
+    Surface(
+      modifier=Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(16.dp),
+      color=MaterialTheme.colorScheme.surface.copy(alpha=.94f),
+      shape=MaterialTheme.shapes.medium,
+      tonalElevation=6.dp
+    ){
+      Column(Modifier.padding(14.dp),verticalArrangement=Arrangement.spacedBy(4.dp)){
+        Text(title,fontWeight=FontWeight.Bold,style=MaterialTheme.typography.titleMedium)
+        Text(hint,style=MaterialTheme.typography.bodySmall)
+      }
+    }
+    FilledTonalButton(onClick=onCancel,modifier=Modifier.align(Alignment.BottomCenter).padding(24.dp).heightIn(min=48.dp)){
+      Text(stringResource(R.string.cancel))
+    }
+  }
+}
+
+@Composable
+private fun HomeScreen(state:AppUiState,vm:MainViewModel,onProvisioningScan:()->Unit,onEnrollmentScan:()->Unit,onDataPackageScan:()->Unit,onImport:()->Unit,url:String,onUrl:(String)->Unit,onOpenUrl:()->Unit,onDetails:()->Unit,onService:()->Unit,onHistory:()->Unit){
   Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)){
     FieldBrandHeader(stringResource(R.string.brand_version, BuildConfig.VERSION_NAME))
     val pkg=state.pkg
     if(pkg==null){
       Text(stringResource(R.string.prepare_title),style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)
       Text(stringResource(R.string.prepare_subtitle))
-      FieldPrimaryButton(onClick=onScan,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)){Text(stringResource(R.string.scan_qr))}
+      FieldPrimaryButton(onClick=onProvisioningScan,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)){Text(stringResource(R.string.prepare_phone_action))}
+      FieldOutlineButton(onClick=onEnrollmentScan,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.enrollment_user_action))}
+      FieldOutlineButton(onClick=onDataPackageScan,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.data_packages_action))}
       FieldOutlineButton(onClick=onImport,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.import_ftak))}
       HorizontalDivider()
       OutlinedTextField(value=url,onValueChange=onUrl,label={Text(stringResource(R.string.descriptor_url))},modifier=Modifier.fillMaxWidth(),singleLine=true)
@@ -138,8 +186,10 @@ private fun HomeScreen(state:AppUiState,vm:MainViewModel,onScan:()->Unit,onImpor
 
     if(!state.trusted) FieldTonalButton(onClick=vm::trustPublisher,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.trust_publisher))}
     FieldPrimaryButton(onClick=vm::preparePhone,modifier=Modifier.fillMaxWidth().heightIn(min=60.dp)){Text(if(state.session?.stage==DeploymentStage.COMPLETE)stringResource(R.string.check_again) else stringResource(R.string.finish_configuration))}
+    FieldOutlineButton(onClick=onEnrollmentScan,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.enrollment_user_action))}
+    FieldOutlineButton(onClick=onDataPackageScan,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Text(stringResource(R.string.data_packages_action))}
     FieldOutlineButton(onClick=onDetails,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.details_checklist))}
-    FieldOutlineButton(onClick=onScan,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.scan_new_qr))}
+    FieldOutlineButton(onClick=onProvisioningScan,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)){Text(stringResource(R.string.scan_new_provisioning_qr))}
     Row(horizontalArrangement=Arrangement.spacedBy(10.dp),modifier=Modifier.fillMaxWidth()){
       FieldTonalButton(onClick=onService,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text(stringResource(R.string.diagnostics))}
       FieldTonalButton(onClick=onHistory,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text(stringResource(R.string.history))}

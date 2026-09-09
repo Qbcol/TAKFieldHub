@@ -149,6 +149,7 @@ public partial class MainWindow : Window
         {
             CloudStatusText.Text=T("CloudTesting","Testing external HTTPS link…");
             var result=await _cloud.TestAsync(CloudUrlBox.Text);
+            if(result.Success && result.WasNormalized) CloudUrlBox.Text=result.DownloadUrl;
             CloudStatusText.Text=(result.Success?"OK: ":"FAIL: ")+result.Detail;
             Log(string.Format(T("LogCloudTest","CLOUD LINK TEST\r\n{0}"),CloudStatusText.Text));
         }
@@ -162,7 +163,9 @@ public partial class MainWindow : Window
             var local=CloudPackageBox.Text.Trim();
             if(string.IsNullOrWhiteSpace(local) || !File.Exists(local)){MessageBox.Show(T("SelectCloudPackageFirst","Select the exact local .ftak file that you uploaded to the cloud."),T("WindowTitle","Field TAK Hub Builder"));return;}
             var project=FromUi();
-            var deepLink=CloudDistributionService.CreateDeepLink(CloudUrlBox.Text,local,DateTimeOffset.UtcNow.AddHours(project.ExpiryHours),project.Name);
+            var resolved=CloudDistributionService.ResolvePackageUrl(CloudUrlBox.Text);
+            var deepLink=CloudDistributionService.CreateDeepLink(resolved.DownloadUrl,local,DateTimeOffset.UtcNow.AddHours(project.ExpiryHours),project.Name);
+            if(resolved.WasNormalized) CloudUrlBox.Text=resolved.DownloadUrl;
             var png=_qr.CreatePng(deepLink); ShowQr(deepLink,png);
             Directory.CreateDirectory(project.OutputDirectory);
             var stem=Path.GetFileNameWithoutExtension(local);
@@ -408,7 +411,7 @@ public partial class MainWindow : Window
         {
             var update=await _updates.CheckAsync();
             if(update==null){if(!silent)Log(T("NoBuilderUpdate","No newer Builder release on the configured channel."));return;}
-            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc5",update.Version));
+            Log(string.Format(T("BuilderUpdateAvailable","Builder update available: {0} → {1}"),"2.1.0-rc7",update.Version));
             if(silent)return;
             if(MessageBox.Show(string.Format(T("BuilderUpdatePrompt","Builder {0} is available. Download the verified ZIP now?"),update.Version),T("UpdateTitle","Field TAK Hub Update"),MessageBoxButton.YesNo,MessageBoxImage.Information)!=MessageBoxResult.Yes)return;
             var path=await _updates.DownloadAsync(update); Log(string.Format(T("UpdateDownloaded","Update downloaded and SHA-256 verified: {0}"),path)); UpdateService.ShowInExplorer(path);
